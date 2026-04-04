@@ -1,0 +1,200 @@
+Design a complete modern desktop UI for a financial AI web application called 
+"AI Investment Recommendation System".
+
+Platform: Desktop Website
+Frame width: 1440px
+Theme:
+- Dark blue and white color scheme
+- Clean modern typography
+- Professional fintech dashboard style
+- Subtle gradients
+- Soft shadows
+- Data visualization charts
+- Minimal and elegant UI components
+
+The design should include the following pages and user flow.
+
+------------------------------------
+
+1. Landing Page (Home)
+- Top navigation bar with logo, About, Features, Pricing, Login, Sign Up
+- Hero section with headline "Smart AI Investment Recommendations"
+- CTA button "Start Investing"
+- Feature cards:
+   • AI Risk Analysis
+   • Smart Investment Suggestions
+   • Portfolio Tracking
+   • Market Trend Insights
+- Illustration of finance dashboard
+- Footer with links
+
+------------------------------------
+
+2. Login Page
+- Centered login card
+- Email input field
+- Password input field
+- Login button
+- "Login with Google" option
+- Forgot Password link
+- Link to Sign Up
+
+------------------------------------
+
+3. Sign Up Page
+- Name
+- Email
+- Password
+- Confirm password
+- Create account button
+- Terms & conditions checkbox
+
+------------------------------------
+
+4. User Dashboard
+Layout:
+- Left sidebar navigation
+- Top header with notifications and user profile
+
+Sidebar menu icons:
+• Dashboard
+• AI Recommendations
+• Risk Profile
+• Portfolio
+• Market Trends
+• AI Chatbot
+• Settings
+• Logout
+
+Dashboard content:
+- Portfolio Balance card
+- Today's Market Summary
+- Risk Profile badge
+- Interactive line chart (portfolio performance)
+- Investment distribution pie chart
+- Recent activity panel
+
+------------------------------------
+
+5. Risk Profile Assessment Page
+Purpose: Determine user's investment risk level.
+
+UI Components:
+- Multi-step questionnaire
+- Questions like:
+   • Investment experience
+   • Financial goals
+   • Risk tolerance
+   • Investment duration
+- Progress bar at top
+- Radio button options
+- Submit for AI Analysis button
+
+After submission show:
+Risk Level Badge:
+Low Risk / Medium Risk / High Risk
+
+------------------------------------
+
+6. AI Recommendation Page
+
+Top section:
+- Greeting message
+- Risk Level Indicator badge
+
+Content sections:
+Recommended Stocks
+- Stock cards with:
+   • Company name
+   • Risk level
+   • Expected return %
+   • Invest button
+
+Recommended Mutual Funds
+- Fund cards with:
+   • Fund name
+   • Risk level
+   • Growth graph
+   • Invest button
+
+Expected Returns Chart
+- Interactive performance graph
+
+------------------------------------
+
+7. Portfolio Page
+
+Portfolio Overview:
+- Total invested amount
+- Profit/Loss indicator
+
+Charts:
+- Portfolio allocation pie chart
+- Performance line chart
+
+Investment Table:
+Columns:
+• Asset name
+• Amount invested
+• Current value
+• ROI
+• Buy/Sell action
+
+------------------------------------
+
+8. Market Trends Page
+
+Sections:
+- Live market index cards
+- Trending stocks
+- AI market insights
+- Candlestick chart
+- News feed panel
+
+------------------------------------
+
+9. AI Chatbot Page
+
+Floating chatbot widget at bottom right of every page.
+
+Dedicated chatbot page layout:
+- Chat window
+- User message bubbles
+- AI response bubbles
+
+Chatbot capabilities:
+- Ask investment questions
+- Explain market trends
+- Suggest investment options
+- Help understand risk profile
+
+Example message:
+User: "Which stocks are good for low risk?"
+AI: Suggest safe stocks or mutual funds.
+
+------------------------------------
+
+10. Settings Page
+
+User settings:
+- Update profile
+- Change password
+- Update financial goals
+- Notification settings
+- Dark/light mode toggle
+
+------------------------------------
+
+Design requirements:
+- Desktop-first layout
+- Modern fintech dashboard aesthetic
+- Professional UI components
+- Rounded cards
+- Soft shadows
+- Consistent spacing
+- Clear data visualization charts
+- Smooth UX navigation
+
+Use reusable components and auto layout.
+
+Generate all screens in one Figma design system.
