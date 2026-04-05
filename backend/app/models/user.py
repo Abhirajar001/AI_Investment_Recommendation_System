@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -12,3 +12,10 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Risk Profile Fields
+    age = Column(Integer, nullable=True)
+    income = Column(Float, nullable=True)
+    investment_experience = Column(String, nullable=True)
+    risk_score = Column(Float, nullable=True)
+    risk_level = Column(String, nullable=True)
