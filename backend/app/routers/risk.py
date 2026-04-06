@@ -3,17 +3,18 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 from app.routers.user import get_current_user
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal
 
 router = APIRouter()
 
 class RiskAssessment(BaseModel):
-    age: int
-    income: float
-    investment_experience: str  # "none", "beginner", "intermediate", "expert"
-    investment_horizon: str     # "short", "medium", "long"
-    risk_tolerance: str         # "low", "medium", "high"
-    monthly_savings: float
+    age: int = Field(ge=18, le=120)
+    income: float = Field(ge=0)
+    investment_experience: Literal["none", "beginner", "intermediate", "expert"]
+    investment_horizon: Literal["short", "medium", "long"]
+    risk_tolerance: Literal["low", "medium", "high"]
+    monthly_savings: float = Field(ge=0)
 
 def calculate_risk_score(data: RiskAssessment) -> float:
     score = 0
@@ -76,7 +77,11 @@ def assess_risk(data: RiskAssessment, current_user: User = Depends(get_current_u
         "risk_score": score,
         "risk_level": level,
         "message": f"Your risk level is {level} with a score of {score}",
-        "recommendations_type": level
+        "recommendations_type": level,
+        "explanation": (
+            "Risk score is based on age, income, experience, investment horizon, "
+            "and risk tolerance answers from your questionnaire."
+        ),
     }
 
 @router.get("/profile")

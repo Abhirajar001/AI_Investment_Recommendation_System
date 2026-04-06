@@ -1,5 +1,7 @@
 import yfinance as yf
 
+from app.services.market_cache import get_cached, set_cached
+
 STOCK_UNIVERSE = {
     "Low": ["JNJ", "PG", "KO", "VZ", "T"],
     "Medium": ["AAPL", "MSFT", "GOOGL", "AMZN", "JPM"],
@@ -25,6 +27,10 @@ MUTUAL_FUNDS = {
 }
 
 def get_stock_data(symbol: str):
+    cached = get_cached(symbol)
+    if cached is not None:
+        return cached
+
     try:
         stock = yf.Ticker(symbol)
         info = stock.info
@@ -37,17 +43,50 @@ def get_stock_data(symbol: str):
         month_ago_price = hist["Close"].iloc[0]
         monthly_return = ((current_price - month_ago_price) / month_ago_price) * 100
 
-        return {
+        payload = {
             "symbol": symbol,
             "name": info.get("longName", symbol),
             "current_price": round(current_price, 2),
             "monthly_return": round(monthly_return, 2),
             "sector": info.get("sector", "N/A"),
             "market_cap": info.get("marketCap", 0),
-            "recommendation": "Buy" if monthly_return > 0 else "Hold"
+            "risk": "High" if abs(monthly_return) > 12 else "Medium" if abs(monthly_return) > 5 else "Low",
+            "expected_return": f"{round(monthly_return, 2)}% (1M momentum)",
+            "recommendation": "Buy" if monthly_return > 0 else "Hold",
+            "explanation": (
+                f"{symbol} is suggested because its recent 1-month return is {round(monthly_return, 2)}%. "
+                f"This fits users seeking {('growth' if monthly_return > 0 else 'stability')} exposure in this sector."
+            ),
         }
+        set_cached(symbol, payload)
+        return payload
     except Exception as e:
         return {"symbol": symbol, "error": str(e)}
+
+
+def get_stock_history(symbol: str, period: str = "6mo"):
+    try:
+        stock = yf.Ticker(symbol)
+        hist = stock.history(period=period)
+        if hist.empty:
+            return {"symbol": symbol, "period": period, "history": [], "error": "No historical data"}
+
+        points = []
+        for idx, row in hist.iterrows():
+            points.append(
+                {
+                    "date": idx.strftime("%Y-%m-%d"),
+                    "open": round(float(row.get("Open", 0)), 2),
+                    "close": round(float(row.get("Close", 0)), 2),
+                    "high": round(float(row.get("High", 0)), 2),
+                    "low": round(float(row.get("Low", 0)), 2),
+                    "volume": int(row.get("Volume", 0)),
+                }
+            )
+
+        return {"symbol": symbol, "period": period, "history": points}
+    except Exception as e:
+        return {"symbol": symbol, "period": period, "history": [], "error": str(e)}
 
 def get_recommendations(risk_level: str, type: str):
     if type == "stocks":
@@ -55,7 +94,7 @@ def get_recommendations(risk_level: str, type: str):
         recommendations = []
         for symbol in symbols:
             data = get_stock_data(symbol)
-            if data:
+            if data and not data.get("error"):
                 recommendations.append(data)
         return {
             "risk_level": risk_level,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -11,6 +11,14 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
+    email_verification_token_hash = Column(String, nullable=True)
+    email_verification_expires_at = Column(DateTime(timezone=True), nullable=True)
+    password_reset_token_hash = Column(String, nullable=True)
+    password_reset_expires_at = Column(DateTime(timezone=True), nullable=True)
+    mfa_enabled = Column(Boolean, default=False)
+    mfa_secret = Column(String, nullable=True)
+    role = Column(String, nullable=False, default="user")  # user | admin
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Risk Profile Fields

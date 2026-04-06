@@ -8,4 +8,28 @@
   Run `npm i` to install the dependencies.
 
   Run `npm run dev` to start the development server.
+
+  ## Smoke test (one command)
+
+  Run `npm run smoke:test` to automatically:
+  - start the backend on `http://127.0.0.1:8001`
+  - start the frontend on `http://127.0.0.1:5173`
+  - check backend `/` and `/openapi.json`
+  - check frontend `/`
+  - stop both servers after the checks
+
+  ## Admin bootstrap (fast)
+
+  Promote a user to admin role:
+
+  - `cd backend`
+  - `.\venv\Scripts\python.exe .\promote_admin.py user@example.com --role admin`
+
+  Demote back to standard user:
+
+  - `.\venv\Scripts\python.exe .\promote_admin.py user@example.com --role user`
+
+  List current admin users:
+
+  - `.\venv\Scripts\python.exe .\list_admins.py`
   

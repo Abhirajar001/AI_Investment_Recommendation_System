@@ -1,6 +1,8 @@
 import { TrendingUp, Mail, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { LoginFormData } from '../../types';
+import axios from 'axios';
+import { authStorage, login, requestPasswordReset } from '../../../../services';
 
 interface LoginPageProps {
   onNavigate: (page: string) => void;
@@ -27,6 +29,8 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const [serverMessage, setServerMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target;
@@ -46,6 +50,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setServerMessage('');
     
     // Validate form
     const newErrors: Record<string, string> = {};
@@ -60,13 +65,46 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
       return;
     }
 
-    // Simulate login
     setIsLoading(true);
-    setTimeout(() => {
-      console.log('Login attempt:', { email: formData.email, rememberMe: formData.rememberMe });
-      setIsLoading(false);
-      onNavigate('dashboard');
-    }, 500);
+
+    login(formData.email, formData.password, mfaCode.trim() || undefined)
+      .then((response) => {
+        authStorage.setToken(response.data.access_token);
+        localStorage.setItem('userEmail', formData.email);
+        setIsLoading(false);
+        onNavigate('dashboard');
+      })
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          setServerMessage(error.response?.data?.detail || 'Unable to sign in right now.');
+        } else {
+          setServerMessage('Something went wrong. Please try again.');
+        }
+        setIsLoading(false);
+      });
+  };
+
+  const handleForgotPassword = () => {
+    if (!formData.email) {
+      setErrors(prev => ({ ...prev, email: 'Enter your email first' }));
+      return;
+    }
+
+    setServerMessage('');
+    setIsLoading(true);
+    requestPasswordReset(formData.email)
+      .then((response) => {
+        setServerMessage(response.data?.dev_reset_token ? `Reset token: ${response.data.dev_reset_token}` : 'Password reset email requested.');
+        setIsLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          setServerMessage(error.response?.data?.detail || 'Unable to request password reset.');
+        } else {
+          setServerMessage('Something went wrong. Please try again.');
+        }
+        setIsLoading(false);
+      });
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-8">
@@ -89,6 +127,10 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {serverMessage ? (
+              <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">{serverMessage}</p>
+            ) : null}
+
             {/* Email Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
@@ -135,6 +177,21 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
               {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">MFA Code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                name="mfaCode"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                placeholder="Optional 6-digit code"
+                className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors border-gray-300 focus:border-blue-600"
+                aria-label="MFA Code"
+              />
+              <p className="text-xs text-gray-500 mt-1">Required only if MFA is enabled on your account.</p>
+            </div>
+
             {/* Forgot Password */}
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2">
@@ -148,9 +205,9 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 />
                 <span className="text-sm text-gray-600">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <button type="button" onClick={handleForgotPassword} className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                 Forgot Password?
-              </a>
+              </button>
             </div>
 
             {/* Login Button */}

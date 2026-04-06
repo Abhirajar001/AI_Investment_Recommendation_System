@@ -5,15 +5,22 @@ from app.models.user import User
 from app.models.portfolio import Portfolio
 from app.routers.user import get_current_user
 from app.services.ai_engine import get_stock_data
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 router = APIRouter()
+
+
 class AddInvestment(BaseModel):
-    symbol: str
-    quantity: float
-    buy_price: float
+    symbol: str = Field(min_length=1, max_length=15)
+    quantity: float = Field(gt=0)
+    buy_price: float = Field(gt=0)
+
+
 @router.post('/add')
 def add_investment(data: AddInvestment, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     stock = get_stock_data(data.symbol.upper())
+    if stock and stock.get("error"):
+        raise HTTPException(status_code=502, detail=f"Market data error for {data.symbol.upper()}: {stock['error']}")
     name = stock.get('name', data.symbol) if stock else data.symbol
     investment = Portfolio(user_id=current_user.id, symbol=data.symbol.upper(), name=name, quantity=data.quantity, buy_price=data.buy_price)
     db.add(investment)
@@ -30,7 +37,10 @@ def get_portfolio(current_user: User = Depends(get_current_user), db: Session = 
     total_current = 0
     for inv in investments:
         stock = get_stock_data(inv.symbol)
-        current_price = stock.get('current_price', inv.buy_price) if stock else inv.buy_price
+        if not stock or stock.get('error'):
+            current_price = inv.buy_price
+        else:
+            current_price = stock.get('current_price', inv.buy_price)
         invested = inv.quantity * inv.buy_price
         current_value = inv.quantity * current_price
         profit_loss = current_value - invested
