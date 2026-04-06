@@ -14,22 +14,29 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
   const [email, setEmail] = useState(defaultEmail);
   const [token, setToken] = useState('');
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [isBusy, setIsBusy] = useState(false);
 
   const handleVerify = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setMessage('');
+    setMessageType('info');
 
     if (!token.trim()) {
       setMessage('Enter verification token first.');
+      setMessageType('error');
       return;
     }
 
     setIsBusy(true);
     verifyEmail(token.trim())
       .then(() => {
+        localStorage.setItem('authFlashMessage', 'Email verified successfully. Sign in to continue.');
+        localStorage.setItem('authFlashType', 'success');
         setMessage('Email verified successfully. You can now sign in.');
+        setMessageType('success');
         localStorage.removeItem('pendingVerificationEmail');
+        window.setTimeout(() => onNavigate('login'), 1200);
       })
       .catch((error: unknown) => {
         if (axios.isAxiosError(error)) {
@@ -37,15 +44,18 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
         } else {
           setMessage('Something went wrong. Please try again.');
         }
+        setMessageType('error');
       })
       .finally(() => setIsBusy(false));
   };
 
   const handleResend = () => {
     setMessage('');
+    setMessageType('info');
 
     if (!email.trim()) {
       setMessage('Enter your email to resend verification.');
+      setMessageType('error');
       return;
     }
 
@@ -59,6 +69,7 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
         } else {
           setMessage('Verification email resent. Check your inbox.');
         }
+        setMessageType('info');
       })
       .catch((error: unknown) => {
         if (axios.isAxiosError(error)) {
@@ -66,6 +77,7 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
         } else {
           setMessage('Something went wrong. Please try again.');
         }
+        setMessageType('error');
       })
       .finally(() => setIsBusy(false));
   };
@@ -84,7 +96,17 @@ export function VerifyEmailPage({ onNavigate }: VerifyEmailPageProps) {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           <form className="space-y-4" onSubmit={handleVerify}>
             {message ? (
-              <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">{message}</p>
+              <p
+                className={`rounded-lg border px-4 py-3 text-sm ${
+                  messageType === 'error'
+                    ? 'border-red-200 bg-red-50 text-red-700'
+                    : messageType === 'success'
+                      ? 'border-green-200 bg-green-50 text-green-700'
+                      : 'border-blue-200 bg-blue-50 text-blue-700'
+                }`}
+              >
+                {message}
+              </p>
             ) : null}
 
             <div>

@@ -1,5 +1,5 @@
 import { TrendingUp, Mail, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoginFormData } from '../../types';
 import axios from 'axios';
 import { authStorage, login } from '../../../../services';
@@ -31,6 +31,18 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
   const [serverMessage, setServerMessage] = useState('');
+  const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
+
+  useEffect(() => {
+    const flashMessage = localStorage.getItem('authFlashMessage');
+    const flashType = localStorage.getItem('authFlashType');
+    if (flashMessage) {
+      setServerMessage(flashMessage);
+      setMessageType(flashType === 'error' ? 'error' : flashType === 'success' ? 'success' : 'info');
+      localStorage.removeItem('authFlashMessage');
+      localStorage.removeItem('authFlashType');
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target;
@@ -51,6 +63,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerMessage('');
+    setMessageType('info');
     
     // Validate form
     const newErrors: Record<string, string> = {};
@@ -80,11 +93,17 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         } else {
           setServerMessage('Something went wrong. Please try again.');
         }
+        setMessageType('error');
         setIsLoading(false);
       });
   };
 
-  const handleForgotPassword = () => onNavigate('reset-password');
+  const handleForgotPassword = () => {
+    if (formData.email.trim()) {
+      localStorage.setItem('pendingResetEmail', formData.email.trim());
+    }
+    onNavigate('reset-password');
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-8">
       <div className="w-full max-w-md">
@@ -107,7 +126,17 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
             {serverMessage ? (
-              <p className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">{serverMessage}</p>
+              <p
+                className={`rounded-lg border px-4 py-3 text-sm ${
+                  messageType === 'error'
+                    ? 'border-red-200 bg-red-50 text-red-700'
+                    : messageType === 'success'
+                      ? 'border-green-200 bg-green-50 text-green-700'
+                      : 'border-blue-200 bg-blue-50 text-blue-700'
+                }`}
+              >
+                {serverMessage}
+              </p>
             ) : null}
 
             {/* Email Input */}

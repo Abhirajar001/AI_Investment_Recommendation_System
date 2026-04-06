@@ -1,5 +1,5 @@
 import { KeyRound, LifeBuoy, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import axios from 'axios';
 
 import { requestPasswordReset, resetPassword } from '../../../../services';
@@ -9,24 +9,30 @@ interface ResetPasswordPageProps {
 }
 
 export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
-  const [email, setEmail] = useState('');
+  const defaultEmail = useMemo(() => localStorage.getItem('pendingResetEmail') || '', []);
+
+  const [email, setEmail] = useState(defaultEmail);
   const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'info' | 'success' | 'error'>('info');
   const [isBusy, setIsBusy] = useState(false);
 
   const handleRequestToken = () => {
     setMessage('');
+    setMessageType('info');
 
     if (!email.trim()) {
       setMessage('Enter your email to request a reset token.');
+      setMessageType('error');
       return;
     }
 
     setIsBusy(true);
     requestPasswordReset(email.trim())
       .then((response) => {
+        localStorage.setItem('pendingResetEmail', email.trim());
         const maybeToken = response.data?.dev_reset_token;
         if (maybeToken) {
           setToken(maybeToken);
@@ -34,6 +40,7 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
         } else {
           setMessage('Password reset instructions sent to your email.');
         }
+        setMessageType('info');
       })
       .catch((error: unknown) => {
         if (axios.isAxiosError(error)) {
@@ -41,6 +48,7 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
         } else {
           setMessage('Something went wrong. Please try again.');
         }
+        setMessageType('error');
       })
       .finally(() => setIsBusy(false));
   };
@@ -48,29 +56,38 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setMessage('');
+    setMessageType('info');
 
     if (!token.trim()) {
       setMessage('Enter the reset token first.');
+      setMessageType('error');
       return;
     }
 
     if (newPassword.length < 8) {
       setMessage('Password must be at least 8 characters long.');
+      setMessageType('error');
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setMessage('Passwords do not match.');
+      setMessageType('error');
       return;
     }
 
     setIsBusy(true);
     resetPassword(token.trim(), newPassword)
       .then(() => {
+        localStorage.setItem('authFlashMessage', 'Password reset successful. Sign in with your new password.');
+        localStorage.setItem('authFlashType', 'success');
         setMessage('Password reset successful. You can now sign in.');
+        setMessageType('success');
         setToken('');
         setNewPassword('');
         setConfirmPassword('');
+        localStorage.removeItem('pendingResetEmail');
+        window.setTimeout(() => onNavigate('login'), 1200);
       })
       .catch((error: unknown) => {
         if (axios.isAxiosError(error)) {
@@ -78,6 +95,7 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
         } else {
           setMessage('Something went wrong. Please try again.');
         }
+        setMessageType('error');
       })
       .finally(() => setIsBusy(false));
   };
@@ -95,7 +113,17 @@ export function ResetPasswordPage({ onNavigate }: ResetPasswordPageProps) {
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           {message ? (
-            <p className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">{message}</p>
+            <p
+              className={`mb-4 rounded-lg border px-4 py-3 text-sm ${
+                messageType === 'error'
+                  ? 'border-red-200 bg-red-50 text-red-700'
+                  : messageType === 'success'
+                    ? 'border-green-200 bg-green-50 text-green-700'
+                    : 'border-blue-200 bg-blue-50 text-blue-700'
+              }`}
+            >
+              {message}
+            </p>
           ) : null}
 
           <div className="space-y-3 mb-6">
