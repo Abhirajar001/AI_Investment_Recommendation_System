@@ -1,6 +1,8 @@
 import { TrendingUp, User, Mail, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { SignUpFormData } from '../../types';
+import axios from 'axios';
+import { register } from '../../../../services';
 
 interface SignUpPageProps {
   onNavigate: (page: string) => void;
@@ -43,6 +45,7 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [serverMessage, setServerMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target;
@@ -62,6 +65,7 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setServerMessage('');
     
     // Validate form
     const newErrors: Record<string, string> = {};
@@ -82,16 +86,21 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
       return;
     }
 
-    // Simulate signup
     setIsLoading(true);
-    setTimeout(() => {
-      console.log('Signup attempt:', { 
-        fullName: formData.fullName, 
-        email: formData.email 
+    register(formData.fullName, formData.email, formData.password)
+      .then(() => {
+        localStorage.setItem('pendingVerificationEmail', formData.email);
+        setIsLoading(false);
+        onNavigate('verify-email');
+      })
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          setServerMessage(error.response?.data?.detail || 'Unable to create account right now.');
+        } else {
+          setServerMessage('Something went wrong. Please try again.');
+        }
+        setIsLoading(false);
       });
-      setIsLoading(false);
-      onNavigate('risk-profile');
-    }, 500);
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-8">
@@ -114,6 +123,10 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
         {/* Sign Up Form */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {serverMessage ? (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{serverMessage}</p>
+            ) : null}
+
             {/* Name Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>

@@ -2,7 +2,7 @@ import { TrendingUp, Mail, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { LoginFormData } from '../../types';
 import axios from 'axios';
-import { authStorage, login, requestPasswordReset } from '../../../../services';
+import { authStorage, login } from '../../../../services';
 
 interface LoginPageProps {
   onNavigate: (page: string) => void;
@@ -84,28 +84,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
       });
   };
 
-  const handleForgotPassword = () => {
-    if (!formData.email) {
-      setErrors(prev => ({ ...prev, email: 'Enter your email first' }));
-      return;
-    }
-
-    setServerMessage('');
-    setIsLoading(true);
-    requestPasswordReset(formData.email)
-      .then((response) => {
-        setServerMessage(response.data?.dev_reset_token ? `Reset token: ${response.data.dev_reset_token}` : 'Password reset email requested.');
-        setIsLoading(false);
-      })
-      .catch((error: unknown) => {
-        if (axios.isAxiosError(error)) {
-          setServerMessage(error.response?.data?.detail || 'Unable to request password reset.');
-        } else {
-          setServerMessage('Something went wrong. Please try again.');
-        }
-        setIsLoading(false);
-      });
-  };
+  const handleForgotPassword = () => onNavigate('reset-password');
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-8">
       <div className="w-full max-w-md">

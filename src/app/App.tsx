@@ -3,6 +3,8 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { LandingPage } from './components/finance/LandingPage';
 import { LoginPage } from './components/finance/LoginPage';
 import { SignUpPage } from './components/finance/SignUpPage';
+import { VerifyEmailPage } from './components/finance/VerifyEmailPage';
+import { ResetPasswordPage } from './components/finance/ResetPasswordPage';
 import { Sidebar } from './components/finance/Sidebar';
 import { Dashboard } from './components/finance/Dashboard';
 import { Recommendations } from './components/finance/Recommendations';
@@ -12,7 +14,7 @@ import { MarketTrends } from './components/finance/MarketTrends';
 import { Chatbot } from './components/finance/Chatbot';
 import { Settings } from './components/finance/Settings';
 
-type Page = 'landing' | 'login' | 'signup' | 'dashboard' | 'recommendations' | 'risk-profile' | 'portfolio' | 'market-trends' | 'chatbot' | 'settings';
+type Page = 'landing' | 'login' | 'signup' | 'verify-email' | 'reset-password' | 'dashboard' | 'recommendations' | 'risk-profile' | 'portfolio' | 'market-trends' | 'chatbot' | 'settings';
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -28,6 +30,14 @@ function AppContent() {
 
   if (currentPage === 'signup') {
     return <SignUpPage onNavigate={setCurrentPage} />;
+  }
+
+  if (currentPage === 'verify-email') {
+    return <VerifyEmailPage onNavigate={setCurrentPage} />;
+  }
+
+  if (currentPage === 'reset-password') {
+    return <ResetPasswordPage onNavigate={setCurrentPage} />;
   }
 
   // Authenticated pages (with sidebar)
