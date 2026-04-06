@@ -1,0 +1,23 @@
+name: Repository Hygiene
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  bytecode-guard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check tracked Python bytecode/cache files
+        run: node ./scripts/check-no-bytecode.js

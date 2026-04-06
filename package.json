@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "smoke:test": "powershell -ExecutionPolicy Bypass -File ./scripts/smoke-test.ps1"
+    "smoke:test": "powershell -ExecutionPolicy Bypass -File ./scripts/smoke-test.ps1",
+    "check:bytecode": "node ./scripts/check-no-bytecode.js"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

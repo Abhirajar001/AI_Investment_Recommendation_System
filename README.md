@@ -18,6 +18,11 @@
   - check frontend `/`
   - stop both servers after the checks
 
+  ## Repo hygiene check
+
+  Run `npm run check:bytecode` to verify no Python cache artifacts are tracked in git
+  (for example `__pycache__/` or `*.pyc` files).
+
   ## Admin bootstrap (fast)
 
   Promote a user to admin role:
