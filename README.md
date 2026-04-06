@@ -28,13 +28,13 @@
   Promote a user to admin role:
 
   - `cd backend`
-  - `.\venv\Scripts\python.exe .\promote_admin.py user@example.com --role admin`
+  - `& .\venv\Scripts\Activate.ps1` or `& .\.venv\Scripts\Activate.ps1`
+  - `python .\promote_admin.py user@example.com --role admin`
 
   Demote back to standard user:
 
-  - `.\venv\Scripts\python.exe .\promote_admin.py user@example.com --role user`
+  - `python .\promote_admin.py user@example.com --role user`
 
   List current admin users:
 
-  - `.\venv\Scripts\python.exe .\list_admins.py`
-  
+  - `python .\list_admins.py`

@@ -3,11 +3,14 @@ import sys
 from sqlalchemy import text
 
 from app.database import engine
+from admin_role_utils import users_table_has_role_column
 
 
 def main() -> int:
     with engine.begin() as conn:
-        conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR NOT NULL DEFAULT 'user'"))
+        if not users_table_has_role_column(conn):
+            print("No admin users found.")
+            return 0
 
         rows = conn.execute(
             text(

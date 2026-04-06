@@ -4,6 +4,7 @@ import sys
 from sqlalchemy import text
 
 from app.database import engine
+from admin_role_utils import ensure_users_role_column
 
 
 def main() -> int:
@@ -15,8 +16,7 @@ def main() -> int:
     email = args.email.strip().lower()
 
     with engine.begin() as conn:
-        # Self-heal for older schemas.
-        conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR NOT NULL DEFAULT 'user'"))
+        ensure_users_role_column(conn)
 
         row = conn.execute(
             text("SELECT id, email, role FROM users WHERE lower(email) = :email LIMIT 1"),
