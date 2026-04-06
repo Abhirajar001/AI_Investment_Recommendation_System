@@ -3,6 +3,10 @@ import sys
 
 from sqlalchemy import text
 
+from script_bootstrap import add_backend_to_path
+
+add_backend_to_path()
+
 from app.database import engine
 from admin_role_utils import ensure_users_role_column
 
