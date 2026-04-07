@@ -50,8 +50,7 @@ def register(user_data: UserRegister, request: Request, db: Session = Depends(ge
         is_verified=False,
     )
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    db.flush()
 
     create_audit_log(
         db,
@@ -60,6 +59,9 @@ def register(user_data: UserRegister, request: Request, db: Session = Depends(ge
         user_id=new_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
+    db.refresh(new_user)
 
     subject, body = build_verification_email(verification_token)
     email_sent = send_email(new_user.email, subject, body)
@@ -72,6 +74,7 @@ def register(user_data: UserRegister, request: Request, db: Session = Depends(ge
             user_id=new_user.id,
             ip_address=request.client.host if request.client else None,
         )
+        db.commit()
 
     if settings.EMAIL_DEBUG_TOKENS:
         return {
@@ -98,7 +101,6 @@ def verify_email(payload: VerifyEmailRequest, request: Request, db: Session = De
     user.is_verified = True
     user.email_verification_token_hash = None
     user.email_verification_expires_at = None
-    db.commit()
 
     create_audit_log(
         db,
@@ -107,6 +109,8 @@ def verify_email(payload: VerifyEmailRequest, request: Request, db: Session = De
         user_id=user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     return {"message": "Email verified successfully"}
 
@@ -119,7 +123,6 @@ def resend_verification(payload: PasswordResetRequest, request: Request, db: Ses
         verification_token = generate_secure_token(24)
         user.email_verification_token_hash = hash_token(verification_token)
         user.email_verification_expires_at = utc_now() + timedelta(hours=24)
-        db.commit()
 
         create_audit_log(
             db,
@@ -128,6 +131,8 @@ def resend_verification(payload: PasswordResetRequest, request: Request, db: Ses
             user_id=user.id,
             ip_address=request.client.host if request.client else None,
         )
+
+        db.commit()
 
         subject, body = build_verification_email(verification_token)
         email_sent = send_email(user.email, subject, body)
@@ -160,7 +165,6 @@ def login(user_data: UserLogin, request: Request, db: Session = Depends(get_db))
             raise HTTPException(status_code=401, detail="Invalid MFA code")
 
     user.last_login_at = utc_now()
-    db.commit()
 
     token = create_access_token({"sub": user.email})
 
@@ -171,6 +175,8 @@ def login(user_data: UserLogin, request: Request, db: Session = Depends(get_db))
         user_id=user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     return {"access_token": token, "token_type": "bearer"}
 
@@ -183,7 +189,6 @@ def request_password_reset(payload: PasswordResetRequest, request: Request, db: 
         reset_token = generate_secure_token(24)
         user.password_reset_token_hash = hash_token(reset_token)
         user.password_reset_expires_at = utc_now() + timedelta(minutes=30)
-        db.commit()
 
         create_audit_log(
             db,
@@ -192,6 +197,8 @@ def request_password_reset(payload: PasswordResetRequest, request: Request, db: 
             user_id=user.id,
             ip_address=request.client.host if request.client else None,
         )
+
+        db.commit()
 
         subject, body = build_password_reset_email(reset_token)
         email_sent = send_email(user.email, subject, body)
@@ -218,7 +225,6 @@ def reset_password(payload: PasswordResetConfirm, request: Request, db: Session 
     user.hashed_password = hash_password(payload.new_password)
     user.password_reset_token_hash = None
     user.password_reset_expires_at = None
-    db.commit()
 
     create_audit_log(
         db,
@@ -227,5 +233,7 @@ def reset_password(payload: PasswordResetConfirm, request: Request, db: Session 
         user_id=user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     return {"message": "Password reset successful"}

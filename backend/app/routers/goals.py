@@ -50,8 +50,7 @@ def add_goal(
         goal_type=payload.goal_type,
     )
     db.add(goal)
-    db.commit()
-    db.refresh(goal)
+    db.flush()
 
     create_audit_log(
         db,
@@ -60,6 +59,9 @@ def add_goal(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
+    db.refresh(goal)
 
     return {
         "message": "Goal added",
@@ -124,7 +126,6 @@ def update_goal(
         goal.goal_type = payload.goal_type
 
     goal.is_completed = goal.current_amount >= goal.target_amount
-    db.commit()
 
     create_audit_log(
         db,
@@ -133,6 +134,8 @@ def update_goal(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     return {
         "message": "Goal updated",
@@ -156,7 +159,6 @@ def delete_goal(
         raise HTTPException(status_code=404, detail="Goal not found")
 
     db.delete(goal)
-    db.commit()
 
     create_audit_log(
         db,
@@ -165,5 +167,7 @@ def delete_goal(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     return {"message": "Goal deleted"}

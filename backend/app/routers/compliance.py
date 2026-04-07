@@ -43,8 +43,7 @@ def submit_kyc(
     # Placeholder: external KYC provider should set real status.
     record.status = "approved"
 
-    db.commit()
-    db.refresh(record)
+    db.flush()
 
     create_audit_log(
         db,
@@ -53,6 +52,9 @@ def submit_kyc(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
+    db.refresh(record)
 
     return {
         "message": "KYC processed",

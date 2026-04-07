@@ -17,4 +17,3 @@ def create_audit_log(
         ip_address=ip_address,
     )
     db.add(log)
-    db.commit()

@@ -26,6 +26,7 @@ def get_current_user(
             details="Rejected request due to invalid token.",
             ip_address=request.client.host if request.client else None,
         )
+        db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
@@ -73,9 +74,6 @@ def update_profile(
     if payload.investment_experience is not None:
         current_user.investment_experience = payload.investment_experience
 
-    db.commit()
-    db.refresh(current_user)
-
     create_audit_log(
         db,
         event_type="profile.updated",
@@ -83,6 +81,9 @@ def update_profile(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
+    db.refresh(current_user)
 
     return {
         "message": "Profile updated",
@@ -110,8 +111,6 @@ def configure_mfa(
         current_user.mfa_enabled = False
         current_user.mfa_secret = None
 
-    db.commit()
-
     create_audit_log(
         db,
         event_type="security.mfa_updated",
@@ -119,6 +118,8 @@ def configure_mfa(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
 
     response = {"message": f"MFA {'enabled' if payload.enable else 'disabled'}", "mfa_enabled": current_user.mfa_enabled}
     if payload.enable:

@@ -36,8 +36,7 @@ def add_alert(
         channel=payload.channel,
     )
     db.add(alert)
-    db.commit()
-    db.refresh(alert)
+    db.flush()
 
     create_audit_log(
         db,
@@ -46,6 +45,9 @@ def add_alert(
         user_id=current_user.id,
         ip_address=request.client.host if request.client else None,
     )
+
+    db.commit()
+    db.refresh(alert)
 
     return {"message": "Alert added", "alert_id": alert.id}
 
