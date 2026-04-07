@@ -150,6 +150,14 @@ def login(user_data: UserLogin, request: Request, db: Session = Depends(get_db))
     user = db.query(User).filter(User.email == user_data.email).first()
 
     if not user or not verify_password(user_data.password, user.hashed_password):
+        create_audit_log(
+            db,
+            event_type="auth.login_failed",
+            details=f"Failed login attempt for {user_data.email}",
+            user_id=user.id if user else None,
+            ip_address=request.client.host if request.client else None,
+        )
+        db.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
@@ -157,11 +165,27 @@ def login(user_data: UserLogin, request: Request, db: Session = Depends(get_db))
         )
 
     if not user.is_verified:
+        create_audit_log(
+            db,
+            event_type="auth.login_failed",
+            details=f"Login blocked because email is not verified for {user.email}",
+            user_id=user.id,
+            ip_address=request.client.host if request.client else None,
+        )
+        db.commit()
         raise HTTPException(status_code=403, detail="Please verify your email before logging in")
 
     if user.mfa_enabled:
         secret = (user.mfa_secret or "").strip()
         if not secret or not user_data.mfa_code or not verify_totp_code(secret, user_data.mfa_code):
+            create_audit_log(
+                db,
+                event_type="auth.login_failed",
+                details=f"Login blocked because of invalid MFA code for {user.email}",
+                user_id=user.id,
+                ip_address=request.client.host if request.client else None,
+            )
+            db.commit()
             raise HTTPException(status_code=401, detail="Invalid MFA code")
 
     user.last_login_at = utc_now()
