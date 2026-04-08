@@ -1,7 +1,11 @@
 import smtplib
 from email.message import EmailMessage
+import logging
 
 from app.config import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def send_email(to_email: str, subject: str, body: str) -> bool:
@@ -15,14 +19,17 @@ def send_email(to_email: str, subject: str, body: str) -> bool:
     msg["To"] = to_email
     msg.set_content(body)
 
-    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=20) as smtp:
-        if settings.SMTP_USE_TLS:
-            smtp.starttls()
-        if settings.SMTP_USERNAME and settings.SMTP_PASSWORD:
-            smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
-        smtp.send_message(msg)
-
-    return True
+    try:
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=20) as smtp:
+            if settings.SMTP_USE_TLS:
+                smtp.starttls()
+            if settings.SMTP_USERNAME and settings.SMTP_PASSWORD:
+                smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+            smtp.send_message(msg)
+        return True
+    except Exception:
+        logger.exception("Failed to send email to %s", to_email)
+        return False
 
 
 def build_verification_email(token: str) -> tuple[str, str]:
