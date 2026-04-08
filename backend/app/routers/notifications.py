@@ -1,3 +1,4 @@
+import math
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Request
@@ -12,6 +13,18 @@ from app.services.ai_engine import get_stock_data
 from app.services.audit_service import create_audit_log
 
 router = APIRouter()
+
+
+def _as_price(value: object) -> float | None:
+    try:
+        price = float(value)
+    except (TypeError, ValueError):
+        return None
+
+    if not math.isfinite(price):
+        return None
+
+    return price
 
 
 class AlertCreate(BaseModel):
@@ -56,7 +69,7 @@ def add_alert(
 def check_alerts(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     alerts = (
         db.query(NotificationAlert)
-        .filter(NotificationAlert.user_id == current_user.id, NotificationAlert.is_triggered == False)
+        .filter(NotificationAlert.user_id == current_user.id, NotificationAlert.is_triggered.is_(False))
         .all()
     )
 
@@ -66,7 +79,10 @@ def check_alerts(current_user: User = Depends(get_current_user), db: Session = D
         if not stock or stock.get("error"):
             continue
 
-        current_price = stock.get("current_price", 0)
+        current_price = _as_price(stock.get("current_price"))
+        if current_price is None:
+            continue
+
         is_hit = (alert.alert_type == "above" and current_price >= alert.alert_price) or (
             alert.alert_type == "below" and current_price <= alert.alert_price
         )
