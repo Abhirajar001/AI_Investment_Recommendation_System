@@ -1,5 +1,6 @@
 import { TrendingUp, Mail, Lock } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { LoginFormData } from '../../types';
 import axios from 'axios';
 import { authStorage, login } from '../../../../services';
@@ -17,6 +18,12 @@ const validateEmail = (email: string): string | null => {
 const validatePassword = (password: string): string | null => {
   if (!password) return 'Password is required';
   if (password.length < 6) return 'Password must be at least 6 characters';
+  return null;
+};
+
+const validateMfaCode = (code: string): string | null => {
+  if (!code) return null;
+  if (!/^\d{6}$/.test(code)) return 'MFA code must be a 6-digit number';
   return null;
 };
 
@@ -44,7 +51,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -60,42 +67,57 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isLoading) return;
+
     setServerMessage('');
     setMessageType('info');
-    
-    // Validate form
+
     const newErrors: Record<string, string> = {};
-    const emailError = validateEmail(formData.email);
-    const passwordError = validatePassword(formData.password);
-    
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
+    const mfa = mfaCode.trim();
+
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    const mfaError = validateMfaCode(mfa);
+
     if (emailError) newErrors.email = emailError;
     if (passwordError) newErrors.password = passwordError;
-    
+    if (mfaError) newErrors.mfaCode = mfaError;
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    setErrors({});
     setIsLoading(true);
 
-    login(formData.email, formData.password, mfaCode.trim() || undefined)
-      .then((response) => {
-        authStorage.setToken(response.data.access_token);
-        localStorage.setItem('userEmail', formData.email);
-        setIsLoading(false);
-        onNavigate('dashboard');
-      })
-      .catch((error: unknown) => {
-        if (axios.isAxiosError(error)) {
-          setServerMessage(error.response?.data?.detail || 'Unable to sign in right now.');
-        } else {
-          setServerMessage('Something went wrong. Please try again.');
-        }
+    try {
+      const response = await login(email, password, mfa || undefined);
+
+      const accessToken = response?.data?.access_token;
+      if (!accessToken) {
+        setServerMessage('Authentication failed. Missing access token.');
         setMessageType('error');
-        setIsLoading(false);
-      });
+        return;
+      }
+
+      authStorage.setToken(accessToken);
+      localStorage.setItem('userEmail', email);
+      onNavigate('dashboard');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setServerMessage(error.response?.data?.detail || 'Unable to sign in right now.');
+      } else {
+        setServerMessage('Something went wrong. Please try again.');
+      }
+      setMessageType('error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -192,11 +214,24 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 inputMode="numeric"
                 name="mfaCode"
                 value={mfaCode}
-                onChange={(e) => setMfaCode(e.target.value)}
+                onChange={(e) => {
+                  setMfaCode(e.target.value);
+                  if (errors.mfaCode) {
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.mfaCode;
+                      return next;
+                    });
+                  }
+                }}
                 placeholder="Optional 6-digit code"
-                className="w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors border-gray-300 focus:border-blue-600"
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
+                  errors.mfaCode ? 'border-red-500 focus:border-red-600' : 'border-gray-300 focus:border-blue-600'
+                }`}
                 aria-label="MFA Code"
+                aria-invalid={!!errors.mfaCode}
               />
+              {errors.mfaCode && <p className="text-red-600 text-sm mt-1">{errors.mfaCode}</p>}
               <p className="text-xs text-gray-500 mt-1">Required only if MFA is enabled on your account.</p>
             </div>
 
