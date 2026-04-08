@@ -1,7 +1,14 @@
-import { TrendingUp, TrendingDown, DollarSign, PieChart as PieChartIcon, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function Portfolio() {
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(value);
+
   const performanceData = [
     { month: 'Jan', value: 45000 },
     { month: 'Feb', value: 48000 },
@@ -21,13 +28,18 @@ export function Portfolio() {
   ];
 
   const investments = [
-    { asset: 'Apple Inc. (AAPL)', invested: '$12,000', current: '$15,240', roi: '+27.0%', change: 'up' },
-    { asset: 'Microsoft Corp. (MSFT)', invested: '$10,000', current: '$12,800', roi: '+28.0%', change: 'up' },
-    { asset: 'Vanguard 500 Index', invested: '$15,000', current: '$17,100', roi: '+14.0%', change: 'up' },
-    { asset: 'NVIDIA Corp. (NVDA)', invested: '$8,000', current: '$11,200', roi: '+40.0%', change: 'up' },
-    { asset: 'Tesla Inc. (TSLA)', invested: '$5,000', current: '$4,750', roi: '-5.0%', change: 'down' },
-    { asset: 'Fidelity Growth Fund', invested: '$12,000', current: '$13,360', roi: '+11.3%', change: 'up' },
+    { asset: 'Apple Inc. (AAPL)', invested: 12000, current: 15240 },
+    { asset: 'Microsoft Corp. (MSFT)', invested: 10000, current: 12800 },
+    { asset: 'Vanguard 500 Index', invested: 15000, current: 17100 },
+    { asset: 'NVIDIA Corp. (NVDA)', invested: 8000, current: 11200 },
+    { asset: 'Tesla Inc. (TSLA)', invested: 5000, current: 4750 },
+    { asset: 'Fidelity Growth Fund', invested: 12000, current: 13360 },
   ];
+
+  const totalInvested = investments.reduce((sum, item) => sum + item.invested, 0);
+  const totalCurrent = investments.reduce((sum, item) => sum + item.current, 0);
+  const totalGain = totalCurrent - totalInvested;
+  const totalGainPct = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
 
   return (
     <div className="flex-1 bg-gradient-to-br from-slate-50 to-blue-50 overflow-auto">
@@ -58,13 +70,12 @@ export function Portfolio() {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                 <DollarSign className="text-white" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
-                <TrendingUp size={16} />
-                <span>+24.2%</span>
+              <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
+                <span>{investments.length} Holdings</span>
               </div>
             </div>
             <p className="text-gray-500 text-sm mb-1">Total Invested</p>
-            <p className="text-3xl font-bold text-gray-800">$62,000</p>
+            <p className="text-3xl font-bold text-gray-800">{formatCurrency(totalInvested)}</p>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -72,26 +83,38 @@ export function Portfolio() {
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                 <TrendingUp className="text-white" size={24} />
               </div>
-              <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
-                <ArrowUpRight size={16} />
-                <span>+7.2%</span>
+              <div className={`flex items-center gap-1 text-sm font-medium ${
+                totalGain >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {totalGain >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                <span>{`${totalGain >= 0 ? '+' : ''}${totalGainPct.toFixed(1)}%`}</span>
               </div>
             </div>
             <p className="text-gray-500 text-sm mb-1">Current Value</p>
-            <p className="text-3xl font-bold text-gray-800">$77,450</p>
+            <p className="text-3xl font-bold text-gray-800">{formatCurrency(totalCurrent)}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl shadow-sm p-6 text-white">
+          <div
+            className={`rounded-xl shadow-sm p-6 text-white ${
+              totalGain >= 0
+                ? 'bg-gradient-to-br from-green-600 to-green-700'
+                : 'bg-gradient-to-br from-red-600 to-red-700'
+            }`}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                <TrendingUp className="text-white" size={24} />
+                {totalGain >= 0 ? (
+                  <TrendingUp className="text-white" size={24} />
+                ) : (
+                  <ArrowDownRight className="text-white" size={24} />
+                )}
               </div>
               <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium">
                 Total Gain
               </div>
             </div>
             <p className="text-green-100 text-sm mb-1">Profit/Loss</p>
-            <p className="text-3xl font-bold">+$15,450</p>
+            <p className="text-3xl font-bold">{`${totalGain >= 0 ? '+' : ''}${formatCurrency(totalGain)}`}</p>
           </div>
         </div>
 
@@ -201,15 +224,24 @@ export function Portfolio() {
                     <td className="px-6 py-4">
                       <span className="font-medium text-gray-800">{investment.asset}</span>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{investment.invested}</td>
-                    <td className="px-6 py-4 text-gray-800 font-medium">{investment.current}</td>
+                    <td className="px-6 py-4 text-gray-600">{formatCurrency(investment.invested)}</td>
+                    <td className="px-6 py-4 text-gray-800 font-medium">{formatCurrency(investment.current)}</td>
                     <td className="px-6 py-4">
+                      {(() => {
+                        const roi = investment.invested > 0
+                          ? ((investment.current - investment.invested) / investment.invested) * 100
+                          : 0;
+                        const isUp = roi >= 0;
+
+                        return (
                       <span className={`inline-flex items-center gap-1 font-bold ${
-                        investment.change === 'up' ? 'text-green-600' : 'text-red-600'
+                        isUp ? 'text-green-600' : 'text-red-600'
                       }`}>
-                        {investment.change === 'up' ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                        {investment.roi}
+                        {isUp ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                        {`${isUp ? '+' : ''}${roi.toFixed(1)}%`}
                       </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
