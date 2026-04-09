@@ -1,5 +1,5 @@
-import { TrendingUp, User, Mail, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, CheckCircle2, Lock, Mail, ShieldCheck, Sparkles, TrendingUp, User } from 'lucide-react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { SignUpFormData } from '../../types';
 import axios from 'axios';
 import { register } from '../../../../services';
@@ -47,7 +47,7 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [serverMessage, setServerMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -63,7 +63,7 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerMessage('');
     
@@ -103,167 +103,148 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
       });
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-8">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
-              <TrendingUp className="text-white" size={28} />
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#fff6dc_0%,_#fffef8_45%,_#f0f9ff_100%)] px-5 py-10 text-slate-900 md:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-3xl border border-amber-200 bg-white/85 p-8 shadow-2xl backdrop-blur md:p-10">
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-md">
+              <TrendingUp className="text-white" size={24} />
             </div>
-            <div className="text-left">
-              <h1 className="text-2xl font-bold text-gray-800">AI Invest</h1>
-              <p className="text-xs text-blue-600">Smart Finance</p>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-orange-600">AI Invest</p>
+              <h1 className="text-2xl font-black tracking-tight">Create your starter account</h1>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Account</h2>
-          <p className="text-gray-600">Start your investment journey today</p>
-        </div>
 
-        {/* Sign Up Form */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+          <div className="mb-8 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-5">
+            <div className="flex items-center gap-2 text-sm font-bold text-cyan-700">
+              <Sparkles size={16} />
+              Built for beginners
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              Start with small amounts, clear goals, and a plan the app can explain step-by-step.
+            </p>
+          </div>
+
           <form className="space-y-5" onSubmit={handleSubmit}>
             {serverMessage ? (
-              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{serverMessage}</p>
+              <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+                {serverMessage}
+              </p>
             ) : null}
 
-            {/* Name Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <User className="text-gray-400" size={20} />
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Your name"
+                    className={`w-full rounded-2xl border-2 bg-white py-3 pl-11 pr-4 outline-none transition-colors ${errors.fullName ? 'border-rose-500' : 'border-slate-200 focus:border-orange-400'}`}
+                    aria-label="Full Name"
+                    aria-invalid={!!errors.fullName}
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    errors.fullName ? 'border-red-500 focus:border-red-600' : 'border-gray-300 focus:border-blue-600'
-                  }`}
-                  aria-label="Full Name"
-                  aria-invalid={!!errors.fullName}
-                />
+                {errors.fullName && <p className="mt-1 text-sm text-rose-600">{errors.fullName}</p>}
               </div>
-              {errors.fullName && <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>}
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="you@example.com"
+                    className={`w-full rounded-2xl border-2 bg-white py-3 pl-11 pr-4 outline-none transition-colors ${errors.email ? 'border-rose-500' : 'border-slate-200 focus:border-orange-400'}`}
+                    aria-label="Email Address"
+                    aria-invalid={!!errors.email}
+                  />
+                </div>
+                {errors.email && <p className="mt-1 text-sm text-rose-600">{errors.email}</p>}
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Create password"
+                    className={`w-full rounded-2xl border-2 bg-white py-3 pl-11 pr-4 outline-none transition-colors ${errors.password ? 'border-rose-500' : 'border-slate-200 focus:border-orange-400'}`}
+                    aria-label="Password"
+                    aria-invalid={!!errors.password}
+                  />
+                </div>
+                {errors.password && <p className="mt-1 text-sm text-rose-600">{errors.password}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Confirm Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm password"
+                    className={`w-full rounded-2xl border-2 bg-white py-3 pl-11 pr-4 outline-none transition-colors ${errors.confirmPassword ? 'border-rose-500' : 'border-slate-200 focus:border-orange-400'}`}
+                    aria-label="Confirm Password"
+                    aria-invalid={!!errors.confirmPassword}
+                  />
+                </div>
+                {errors.confirmPassword && <p className="mt-1 text-sm text-rose-600">{errors.confirmPassword}</p>}
+              </div>
             </div>
 
-            {/* Email Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <Mail className="text-gray-400" size={20} />
-                </div>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    errors.email ? 'border-red-500 focus:border-red-600' : 'border-gray-300 focus:border-blue-600'
-                  }`}
-                  aria-label="Email Address"
-                  aria-invalid={!!errors.email}
-                />
-              </div>
-              {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-            </div>
-
-            {/* Password Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <Lock className="text-gray-400" size={20} />
-                </div>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Create a password"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    errors.password ? 'border-red-500 focus:border-red-600' : 'border-gray-300 focus:border-blue-600'
-                  }`}
-                  aria-label="Password"
-                  aria-invalid={!!errors.password}
-                />
-              </div>
-              {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
-            </div>
-
-            {/* Confirm Password Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                  <Lock className="text-gray-400" size={20} />
-                </div>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                  className={`w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    errors.confirmPassword ? 'border-red-500 focus:border-red-600' : 'border-gray-300 focus:border-blue-600'
-                  }`}
-                  aria-label="Confirm Password"
-                  aria-invalid={!!errors.confirmPassword}
-                />
-              </div>
-              {errors.confirmPassword && <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>}
-            </div>
-
-            {/* Terms & Conditions */}
-            <div>
-              <label className="flex items-start gap-2">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <label className="flex items-start gap-3">
                 <input
                   type="checkbox"
                   name="agreedToTerms"
                   checked={formData.agreedToTerms}
                   onChange={handleChange}
-                  className="w-4 h-4 mt-1 text-blue-600 rounded"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-500"
                   aria-label="Agree to terms and conditions"
                 />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm leading-relaxed text-slate-600">
                   I agree to the{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Terms & Conditions
-                  </a>{' '}
+                  <a href="#" className="font-semibold text-orange-600 hover:text-orange-700">Terms & Conditions</a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Privacy Policy
-                  </a>
+                  <a href="#" className="font-semibold text-orange-600 hover:text-orange-700"> Privacy Policy</a>.
                 </span>
               </label>
-              {errors.agreedToTerms && <p className="text-red-600 text-sm mt-1">{errors.agreedToTerms}</p>}
+              {errors.agreedToTerms && <p className="mt-2 text-sm text-rose-600">{errors.agreedToTerms}</p>}
             </div>
 
-            {/* Create Account Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 py-3.5 text-base font-extrabold text-white shadow-lg transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
               aria-busy={isLoading}
             >
-              {isLoading ? 'Creating account...' : 'Create Account'}
+              {isLoading ? 'Creating account...' : 'Create My Starter Account'}
+              <ArrowRight size={18} />
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="text-sm text-gray-500">OR</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="mt-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-slate-200"></div>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-slate-400">or</span>
+            <div className="h-px flex-1 bg-slate-200"></div>
           </div>
 
-          {/* Sign Up with Google */}
-          <button className="w-full py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-3">
+          <button className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-700 transition-colors hover:border-orange-300 hover:bg-orange-50">
             <svg width="20" height="20" viewBox="0 0 20 20">
               <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
               <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
@@ -273,29 +254,45 @@ export function SignUpPage({ onNavigate }: SignUpPageProps) {
             Continue with Google
           </button>
 
-          {/* Login Link */}
-          <div className="text-center mt-6">
-            <p className="text-gray-600">
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-600">
               Already have an account?{' '}
-              <button 
-                onClick={() => onNavigate('login')}
-                className="text-blue-600 hover:text-blue-700 font-semibold"
-              >
+              <button onClick={() => onNavigate('login')} className="font-bold text-orange-600 hover:text-orange-700">
                 Sign In
               </button>
             </p>
           </div>
+
+          <div className="mt-6 flex flex-wrap gap-3 text-xs text-slate-500">
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1"><CheckCircle2 size={14} /> 2-min setup</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1"><ShieldCheck size={14} /> Secure by design</span>
+          </div>
         </div>
 
-        {/* Back to Home */}
-        <div className="text-center mt-6">
-          <button 
-            onClick={() => onNavigate('landing')}
-            className="text-gray-600 hover:text-gray-800 text-sm"
-          >
-            ← Back to Home
-          </button>
-        </div>
+        <aside className="flex items-center justify-center rounded-3xl border border-slate-200 bg-slate-900 p-8 text-white shadow-2xl">
+          <div className="max-w-sm">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-200">
+              <Sparkles size={14} />
+              First investment friendly
+            </div>
+            <h2 className="text-4xl font-black leading-tight tracking-tight">A calmer way to start investing.</h2>
+            <p className="mt-4 text-sm leading-relaxed text-slate-300">
+              We turn confusing finance into a simple plan: learn, invest a small amount, and grow with confidence.
+            </p>
+            <div className="mt-8 space-y-4">
+              {[
+                'Clear beginner-safe recommendations',
+                'Small amount investing from day one',
+                'AI that explains the why behind every step',
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-100">
+                  <CheckCircle2 className="text-emerald-300" size={18} />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

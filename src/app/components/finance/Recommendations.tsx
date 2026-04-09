@@ -1,4 +1,4 @@
-import { TrendingUp, AlertCircle, CheckCircle, BarChart3, ArrowRight } from 'lucide-react';
+import { ArrowRight, BadgeCheck, BarChart3, BookOpen, Sparkles, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function Recommendations() {
@@ -9,225 +9,255 @@ export function Recommendations() {
     { period: '1Y', expected: 24.5, market: 18.7 },
   ];
 
-  const stocks = [
-    { 
-      ticker: 'AAPL', 
-      name: 'Apple Inc.', 
-      risk: 'Low', 
+  const recommendations = [
+    {
+      ticker: 'AAPL',
+      name: 'Apple Inc.',
+      risk: 'Low',
       expectedReturn: '18.5%',
       price: '$175.42',
-      recommendation: 'Strong Buy'
+      label: 'Starter Pick',
+      note: 'Stable growth with strong brand resilience.',
     },
-    { 
-      ticker: 'MSFT', 
-      name: 'Microsoft Corp.', 
-      risk: 'Low', 
+    {
+      ticker: 'MSFT',
+      name: 'Microsoft Corp.',
+      risk: 'Low',
       expectedReturn: '16.2%',
       price: '$412.78',
-      recommendation: 'Buy'
+      label: 'Balanced Pick',
+      note: 'Good mix of safety, AI momentum, and long-term value.',
     },
-    { 
-      ticker: 'NVDA', 
-      name: 'NVIDIA Corp.', 
-      risk: 'Medium', 
+    {
+      ticker: 'NVDA',
+      name: 'NVIDIA Corp.',
+      risk: 'Medium',
       expectedReturn: '28.4%',
       price: '$825.90',
-      recommendation: 'Strong Buy'
+      label: 'Growth Pick',
+      note: 'Higher upside for learners comfortable with more volatility.',
     },
-    { 
-      ticker: 'GOOGL', 
-      name: 'Alphabet Inc.', 
-      risk: 'Low', 
+    {
+      ticker: 'GOOGL',
+      name: 'Alphabet Inc.',
+      risk: 'Low',
       expectedReturn: '15.8%',
       price: '$142.15',
-      recommendation: 'Buy'
+      label: 'Value Pick',
+      note: 'A calm pick for building confidence and consistency.',
     },
   ];
 
-  const mutualFunds = [
-    { 
-      name: 'Vanguard Total Stock Market', 
-      risk: 'Low', 
+  const funds = [
+    {
+      name: 'Vanguard Total Stock Market',
+      risk: 'Low',
       expectedReturn: '12.5%',
       aum: '$1.3T',
-      expenseRatio: '0.04%'
+      expenseRatio: '0.04%',
     },
-    { 
-      name: 'Fidelity 500 Index Fund', 
-      risk: 'Low', 
+    {
+      name: 'Fidelity 500 Index Fund',
+      risk: 'Low',
       expectedReturn: '13.2%',
       aum: '$456B',
-      expenseRatio: '0.015%'
+      expenseRatio: '0.015%',
     },
-    { 
-      name: 'T. Rowe Price Growth Stock', 
-      risk: 'Medium', 
+    {
+      name: 'T. Rowe Price Growth Stock',
+      risk: 'Medium',
       expectedReturn: '18.7%',
       aum: '$125B',
-      expenseRatio: '0.67%'
+      expenseRatio: '0.67%',
     },
   ];
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
       case 'Low':
-        return 'bg-green-100 text-green-700 border-green-200';
+        return 'bg-emerald-100 text-emerald-700 border-emerald-200';
       case 'Medium':
-        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+        return 'bg-amber-100 text-amber-700 border-amber-200';
       case 'High':
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-rose-100 text-rose-700 border-rose-200';
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-200';
+        return 'bg-slate-100 text-slate-700 border-slate-200';
     }
   };
 
   return (
-    <div className="flex-1 bg-gradient-to-br from-slate-50 to-blue-50 overflow-auto">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between">
+    <div className="flex-1 overflow-auto bg-[radial-gradient(circle_at_top,_#fff6dc_0%,_#fffef8_45%,_#eff6ff_100%)] text-slate-900">
+      <div className="border-b border-amber-200/60 bg-white/85 px-5 py-6 backdrop-blur md:px-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">AI Recommendations</h2>
-            <p className="text-gray-500 mt-1">Personalized investment suggestions based on your risk profile</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm">
-              Your Risk: Moderate
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+              <Sparkles size={14} />
+              Beginner-friendly picks
             </div>
+            <h2 className="text-3xl font-black tracking-tight md:text-4xl">Recommended investments</h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600 md:text-base">
+              Curated ideas that match a young investor’s comfort level, learning stage, and long-term goals.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Your risk</p>
+            <p className="mt-1 text-lg font-black text-slate-900">Moderate</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-8">
-        {/* Personalized Greeting */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 mb-8 text-white shadow-lg">
-          <div className="flex items-start justify-between">
+      <div className="space-y-8 p-5 md:p-8">
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
-              <h3 className="text-2xl font-bold mb-2">Hello, Alex! 👋</h3>
-              <p className="text-blue-100 mb-4">Based on your moderate risk profile, we've curated these investment opportunities for you.</p>
-              <div className="flex items-center gap-6 mt-6">
-                <div className="flex items-center gap-2">
-                  <CheckCircle size={20} />
-                  <span className="text-sm">AI Analyzed</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BarChart3 size={20} />
-                  <span className="text-sm">Market Tested</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TrendingUp size={20} />
-                  <span className="text-sm">Growth Focused</span>
-                </div>
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
+                <BadgeCheck size={14} /> Smart starting point
+              </div>
+              <h3 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">Clear picks with simple reasons</h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
+                These are not random stock names. They are filtered to help new investors learn the market while staying comfortable.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold text-slate-600">
+                <span className="rounded-full bg-slate-100 px-3 py-1">Low-stress mode</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1">AI explained</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1">Small amount friendly</span>
               </div>
             </div>
-            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <AlertCircle className="text-white" size={32} />
+            <div className="rounded-3xl bg-slate-900 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                  <BookOpen size={22} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Today’s lesson</p>
+                  <p className="text-lg font-black">Why diversification matters</p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-slate-300">
+                A starter portfolio spreads your money across different assets so a single bad move does not knock you off course.
+              </p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Expected Returns Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Expected Returns vs Market Average</h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={returnData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="period" stroke="#6b7280" style={{ fontSize: '12px' }} />
-              <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#fff', 
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '14px'
-                }} 
-              />
-              <Bar dataKey="expected" fill="#3b82f6" name="Your Expected Return" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="market" fill="#94a3b8" name="Market Average" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Recommended Stocks */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold text-gray-800">Recommended Stocks</h3>
-              <p className="text-sm text-gray-500 mt-1">Top AI-selected stocks matching your profile</p>
+        <section className="grid gap-6 xl:grid-cols-[1.45fr_0.95fr]">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Expected return vs market average</h3>
+                <p className="mt-1 text-sm text-slate-500">A simple look at what the AI thinks you may get.</p>
+              </div>
+              <BarChart3 className="text-orange-500" size={20} />
             </div>
-            <button className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-2">
-              View All <ArrowRight size={16} />
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={returnData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="period" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '14px' }}
+                />
+                <Bar dataKey="expected" fill="#f97316" name="Your Expected Return" radius={[10, 10, 0, 0]} />
+                <Bar dataKey="market" fill="#94a3b8" name="Market Average" radius={[10, 10, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60">
+            <h3 className="text-xl font-black text-slate-900">How to read this page</h3>
+            <div className="mt-5 space-y-3">
+              {[
+                'Lower risk options are easier to start with.',
+                'Small monthly amounts matter more than perfect timing.',
+                'The app explains why each option appears here.',
+              ].map((item) => (
+                <div key={item} className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  {item}
+                </div>
+              ))}
+            </div>
+            <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-3.5 text-sm font-extrabold text-white shadow-lg transition-transform hover:-translate-y-0.5">
+              Build my starter plan
+              <ArrowRight size={16} />
             </button>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            {stocks.map((stock, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all">
-                <div className="flex items-start justify-between mb-4">
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-black text-slate-900">Recommended stocks</h3>
+              <p className="mt-1 text-sm text-slate-500">A few beginner-friendly ideas to explore.</p>
+            </div>
+            <button className="inline-flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700">
+              View all <ArrowRight size={16} />
+            </button>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            {recommendations.map((stock) => (
+              <article key={stock.ticker} className="rounded-2xl border border-slate-200 p-5 transition-all hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg">
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="text-xl font-bold text-gray-800">{stock.ticker}</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getRiskColor(stock.risk)}`}>
-                        {stock.risk} Risk
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xl font-black text-slate-900">{stock.ticker}</span>
+                      <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${getRiskColor(stock.risk)}`}>
+                        {stock.risk} risk
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{stock.name}</p>
+                    <p className="mt-1 text-sm text-slate-600">{stock.name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-500">Current Price</p>
-                    <p className="text-lg font-bold text-gray-800">{stock.price}</p>
+                    <p className="text-xs font-semibold text-slate-400">Current</p>
+                    <p className="text-lg font-black text-slate-900">{stock.price}</p>
                   </div>
                 </div>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Expected Return</p>
-                    <p className="text-lg font-bold text-green-600">{stock.expectedReturn}</p>
-                  </div>
-                  <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all">
-                    Invest Now
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Mutual Funds */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold text-gray-800">Recommended Mutual Funds</h3>
-              <p className="text-sm text-gray-500 mt-1">Low-cost diversified fund options</p>
-            </div>
+                <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">{stock.note}</div>
+
+                <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Expected return</p>
+                    <p className="text-xl font-black text-emerald-600">{stock.expectedReturn}</p>
+                    <p className="text-xs font-medium text-slate-500">{stock.label}</p>
+                  </div>
+                  <button className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2.5 text-sm font-extrabold text-white shadow-md transition-transform hover:-translate-y-0.5">
+                    Invest now
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
-          
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <div className="mb-6">
+            <h3 className="text-xl font-black text-slate-900">Recommended mutual funds</h3>
+            <p className="mt-1 text-sm text-slate-500">For young investors who want simple diversification.</p>
+          </div>
           <div className="space-y-4">
-            {mutualFunds.map((fund, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-5 hover:border-blue-300 hover:shadow-md transition-all">
-                <div className="flex items-center justify-between">
+            {funds.map((fund) => (
+              <div key={fund.name} className="rounded-2xl border border-slate-200 p-5 transition-all hover:-translate-y-1 hover:border-cyan-300 hover:shadow-lg">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="font-bold text-gray-800">{fund.name}</span>
-                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getRiskColor(fund.risk)}`}>
-                        {fund.risk} Risk
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-slate-900">{fund.name}</span>
+                      <span className={`rounded-full border px-2.5 py-1 text-xs font-bold ${getRiskColor(fund.risk)}`}>{fund.risk} risk</span>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                    <div className="mt-2 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate-600">
                       <span>AUM: {fund.aum}</span>
-                      <span>Expense Ratio: {fund.expenseRatio}</span>
-                      <span className="text-green-600 font-medium">Expected: {fund.expectedReturn}</span>
+                      <span>Expense ratio: {fund.expenseRatio}</span>
+                      <span className="font-semibold text-emerald-600">Expected: {fund.expectedReturn}</span>
                     </div>
                   </div>
-                  <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:shadow-lg transition-all">
-                    Invest Now
+                  <button className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white shadow-md transition-transform hover:-translate-y-0.5">
+                    Add to plan
                   </button>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

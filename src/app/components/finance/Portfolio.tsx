@@ -1,5 +1,5 @@
-import { TrendingUp, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ArrowDownRight, ArrowUpRight, BarChart3, PieChart, TrendingUp, Wallet } from 'lucide-react';
+import { PieChart as RePieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function Portfolio() {
   const formatCurrency = (value: number) =>
@@ -20,11 +20,11 @@ export function Portfolio() {
   ];
 
   const allocationData = [
-    { name: 'Tech Stocks', value: 35, color: '#3b82f6' },
-    { name: 'Mutual Funds', value: 30, color: '#8b5cf6' },
+    { name: 'Tech Stocks', value: 35, color: '#f97316' },
+    { name: 'Mutual Funds', value: 30, color: '#06b6d4' },
     { name: 'Real Estate', value: 20, color: '#10b981' },
     { name: 'Bonds', value: 10, color: '#f59e0b' },
-    { name: 'Cash', value: 5, color: '#6b7280' },
+    { name: 'Cash', value: 5, color: '#64748b' },
   ];
 
   const investments = [
@@ -42,223 +42,192 @@ export function Portfolio() {
   const totalGainPct = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
 
   return (
-    <div className="flex-1 bg-gradient-to-br from-slate-50 to-blue-50 overflow-auto">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between">
+    <div className="flex-1 overflow-auto bg-[radial-gradient(circle_at_top,_#fff6dc_0%,_#fffef8_45%,_#eff6ff_100%)] text-slate-900">
+      <div className="border-b border-amber-200/60 bg-white/85 px-5 py-6 backdrop-blur md:px-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Portfolio</h2>
-            <p className="text-gray-500 mt-1">Track and manage your investments</p>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+              <TrendingUp size={14} />
+              Your money at a glance
+            </div>
+            <h2 className="text-3xl font-black tracking-tight md:text-4xl">Portfolio dashboard</h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600 md:text-base">
+              A friendly summary of what you invested, how it is growing, and what your next move could be.
+            </p>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-all">
-              Export Report
-            </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:shadow-lg transition-all">
-              Add Investment
-            </button>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              ['Holdings', `${investments.length}`],
+              ['Gain', `${totalGain >= 0 ? '+' : ''}${totalGainPct.toFixed(1)}%`],
+              ['Value', formatCurrency(totalCurrent)],
+              ['Mode', 'Balanced'],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{label}</p>
+                <p className="mt-1 text-sm font-black text-slate-900">{value}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-8">
-        {/* Overview Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <DollarSign className="text-white" size={24} />
+      <div className="space-y-8 p-5 md:p-8">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-md">
+                <Wallet size={22} />
               </div>
-              <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
-                <span>{investments.length} Holdings</span>
-              </div>
+              <span className="text-sm font-bold text-slate-500">{investments.length} holdings</span>
             </div>
-            <p className="text-gray-500 text-sm mb-1">Total Invested</p>
-            <p className="text-3xl font-bold text-gray-800">{formatCurrency(totalInvested)}</p>
-          </div>
+            <p className="text-sm font-semibold text-slate-500">Total invested</p>
+            <p className="mt-2 text-3xl font-black text-slate-900">{formatCurrency(totalInvested)}</p>
+          </article>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <TrendingUp className="text-white" size={24} />
+          <article className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-600 to-sky-500 text-white shadow-md">
+                <TrendingUp size={22} />
               </div>
-              <div className={`flex items-center gap-1 text-sm font-medium ${
-                totalGain >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {totalGain >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                <span>{`${totalGain >= 0 ? '+' : ''}${totalGainPct.toFixed(1)}%`}</span>
-              </div>
+              <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold ${totalGain >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                {totalGain >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                {totalGain >= 0 ? '+' : ''}{totalGainPct.toFixed(1)}%
+              </span>
             </div>
-            <p className="text-gray-500 text-sm mb-1">Current Value</p>
-            <p className="text-3xl font-bold text-gray-800">{formatCurrency(totalCurrent)}</p>
-          </div>
+            <p className="text-sm font-semibold text-slate-500">Current value</p>
+            <p className="mt-2 text-3xl font-black text-slate-900">{formatCurrency(totalCurrent)}</p>
+          </article>
 
-          <div
-            className={`rounded-xl shadow-sm p-6 text-white ${
-              totalGain >= 0
-                ? 'bg-gradient-to-br from-green-600 to-green-700'
-                : 'bg-gradient-to-br from-red-600 to-red-700'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                {totalGain >= 0 ? (
-                  <TrendingUp className="text-white" size={24} />
-                ) : (
-                  <ArrowDownRight className="text-white" size={24} />
-                )}
+          <article className={`rounded-3xl border border-white/70 p-6 shadow-xl shadow-slate-200/70 ${totalGain >= 0 ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white' : 'bg-gradient-to-br from-rose-500 to-red-500 text-white'}`}>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white shadow-md">
+                {totalGain >= 0 ? <TrendingUp size={22} /> : <ArrowDownRight size={22} />}
               </div>
-              <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium">
-                Total Gain
-              </div>
+              <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">Total gain</span>
             </div>
-            <p className="text-green-100 text-sm mb-1">Profit/Loss</p>
-            <p className="text-3xl font-bold">{`${totalGain >= 0 ? '+' : ''}${formatCurrency(totalGain)}`}</p>
-          </div>
+            <p className="text-sm font-semibold text-white/80">Profit / loss</p>
+            <p className="mt-2 text-3xl font-black">{`${totalGain >= 0 ? '+' : ''}${formatCurrency(totalGain)}`}</p>
+          </article>
+
+          <article className="rounded-3xl border border-white/70 bg-slate-900 p-6 text-white shadow-xl shadow-slate-200/70">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-md">
+                <BarChart3 size={22} />
+              </div>
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-cyan-200">AI guide</span>
+            </div>
+            <p className="text-sm font-semibold text-slate-300">Learning pace</p>
+            <p className="mt-2 text-3xl font-black">Steady</p>
+          </article>
         </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          {/* Performance Chart */}
-          <div className="col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
+        <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60">
+            <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-gray-800">Portfolio Performance</h3>
-                <p className="text-sm text-gray-500 mt-1">7 months growth trend</p>
+                <h3 className="text-xl font-black text-slate-900">Portfolio growth</h3>
+                <p className="mt-1 text-sm text-slate-500">A friendly view of how your money has moved over time.</p>
               </div>
-              <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                <option>6 Months</option>
-                <option>1 Year</option>
-                <option>All Time</option>
-              </select>
+              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">7 months</div>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={320}>
               <LineChart data={performanceData}>
                 <defs>
                   <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
                 <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px'
-                  }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#10b981" 
-                  strokeWidth={3}
-                  dot={{ fill: '#10b981', r: 4 }}
-                  activeDot={{ r: 6 }}
-                  fill="url(#portfolioGradient)"
-                />
+                <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '14px' }} />
+                <Line type="monotone" dataKey="value" stroke="#f97316" strokeWidth={3} dot={{ fill: '#f97316', r: 4 }} activeDot={{ r: 6 }} fill="url(#portfolioGradient)" />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+          </section>
 
-          {/* Allocation Pie Chart */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-800">Asset Allocation</h3>
-              <p className="text-sm text-gray-500 mt-1">Portfolio distribution</p>
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60">
+            <div className="mb-6 flex items-center gap-2">
+              <PieChart className="text-orange-500" size={20} />
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Asset allocation</h3>
+                <p className="mt-1 text-sm text-slate-500">How your portfolio is spread out.</p>
+              </div>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={allocationData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
+            <ResponsiveContainer width="100%" height={220}>
+              <RePieChart>
+                <Pie data={allocationData} cx="50%" cy="50%" innerRadius={65} outerRadius={90} paddingAngle={2} dataKey="value">
                   {allocationData.map((entry) => (
                     <Cell key={`cell-${entry.name}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
-              </PieChart>
+              </RePieChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-2">
               {allocationData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
+                <div key={item.name} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                    <span className="text-xs text-gray-700">{item.name}</span>
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                    <span className="text-sm font-medium text-slate-700">{item.name}</span>
                   </div>
-                  <span className="text-xs font-medium text-gray-800">{item.value}%</span>
+                  <span className="text-sm font-black text-slate-900">{item.value}%</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
 
-        {/* Investment Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-bold text-gray-800">Investment Holdings</h3>
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <div className="mb-6 flex items-center gap-2">
+            <TrendingUp className="text-orange-500" size={20} />
+            <h3 className="text-xl font-black text-slate-900">Investment holdings</h3>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="w-full min-w-[720px]">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Asset Name</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Amount Invested</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Current Value</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ROI</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                  <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">Asset</th>
+                  <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">Invested</th>
+                  <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">Current</th>
+                  <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">ROI</th>
+                  <th className="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
-                {investments.map((investment) => (
-                  <tr key={investment.asset} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-gray-800">{investment.asset}</span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">{formatCurrency(investment.invested)}</td>
-                    <td className="px-6 py-4 text-gray-800 font-medium">{formatCurrency(investment.current)}</td>
-                    <td className="px-6 py-4">
-                      {(() => {
-                        const roi = investment.invested > 0
-                          ? ((investment.current - investment.invested) / investment.invested) * 100
-                          : 0;
-                        const isUp = roi >= 0;
+              <tbody className="divide-y divide-slate-200">
+                {investments.map((investment) => {
+                  const roi = investment.invested > 0 ? ((investment.current - investment.invested) / investment.invested) * 100 : 0;
+                  const isUp = roi >= 0;
 
-                        return (
-                      <span className={`inline-flex items-center gap-1 font-bold ${
-                        isUp ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {isUp ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-                        {`${isUp ? '+' : ''}${roi.toFixed(1)}%`}
-                      </span>
-                        );
-                      })()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
-                          Buy
-                        </button>
-                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
-                          Sell
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                  return (
+                    <tr key={investment.asset} className="transition-colors hover:bg-slate-50">
+                      <td className="px-5 py-4 font-semibold text-slate-900">{investment.asset}</td>
+                      <td className="px-5 py-4 text-slate-600">{formatCurrency(investment.invested)}</td>
+                      <td className="px-5 py-4 font-semibold text-slate-900">{formatCurrency(investment.current)}</td>
+                      <td className="px-5 py-4">
+                        <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-black ${isUp ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                          {isUp ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                          {`${isUp ? '+' : ''}${roi.toFixed(1)}%`}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-2">
+                          <button className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-emerald-600">
+                            Buy
+                          </button>
+                          <button className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-rose-600">
+                            Sell
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

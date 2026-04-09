@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import LoginPage from '../../app/components/finance/LoginPage';
+import { LoginPage } from '../../app/components/finance/LoginPage';
 
-export const renderLoginPage = (onNavigate: ReturnType<typeof vi.fn>) => {
+export const renderLoginPage = (onNavigate: (page: string) => void = () => {}) => {
   render(<LoginPage onNavigate={onNavigate} />);
 };
 

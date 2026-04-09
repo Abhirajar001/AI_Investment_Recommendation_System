@@ -1,4 +1,4 @@
-import { Brain, CheckCircle, ArrowRight } from 'lucide-react';
+import { ArrowRight, Brain, CheckCircle2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 export function RiskProfile() {
@@ -7,58 +7,55 @@ export function RiskProfile() {
 
   const questions = [
     {
-      id: 0,
-      question: "What is your primary investment goal?",
+      question: 'What are you investing for right now?',
       options: [
-        "Wealth preservation - I want to protect my capital",
-        "Income generation - I want regular income from investments",
-        "Balanced growth - I want moderate growth with some stability",
-        "Aggressive growth - I want maximum returns, accepting higher risk"
-      ]
+        'Protect my money while I learn',
+        'Build a side-income habit',
+        'Grow steadily over time',
+        'Aim for higher returns and accept more ups and downs',
+      ],
     },
     {
-      id: 1,
-      question: "What is your investment time horizon?",
+      question: 'How long can you keep your money invested?',
       options: [
-        "Short-term (Less than 3 years)",
-        "Medium-term (3-7 years)",
-        "Long-term (7-15 years)",
-        "Very long-term (15+ years)"
-      ]
+        'Less than 3 years',
+        '3-7 years',
+        '7-15 years',
+        '15+ years',
+      ],
     },
     {
-      id: 2,
-      question: "How would you react if your portfolio dropped 20% in value?",
+      question: 'If your portfolio dropped 20%, what would you do?',
       options: [
-        "Sell everything immediately - I can't handle losses",
-        "Sell some investments to reduce exposure",
-        "Hold steady and wait for recovery",
-        "Buy more - it's a great opportunity"
-      ]
+        'Exit immediately',
+        'Reduce exposure a little',
+        'Wait calmly for recovery',
+        'See it as a chance to buy more',
+      ],
     },
     {
-      id: 3,
-      question: "What percentage of your total savings are you investing?",
+      question: 'How much of your savings are you ready to invest?',
       options: [
-        "Less than 10%",
-        "10% - 30%",
-        "30% - 50%",
-        "More than 50%"
-      ]
+        'Less than 10%',
+        '10% - 30%',
+        '30% - 50%',
+        'More than 50%',
+      ],
     },
     {
-      id: 4,
-      question: "How experienced are you with investing?",
+      question: 'How new are you to investing?',
       options: [
-        "Beginner - Just getting started",
-        "Intermediate - Have some knowledge and experience",
-        "Advanced - Actively manage my investments",
-        "Expert - Extensive market knowledge and experience"
-      ]
-    }
+        'I am just getting started',
+        'I know the basics',
+        'I have invested before',
+        'I actively manage investments',
+      ],
+    },
   ];
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const isLastQuestion = currentQuestion === questions.length - 1;
+  const isAnswered = answers[currentQuestion] !== undefined;
 
   const handleAnswer = (optionIndex: string) => {
     setAnswers({ ...answers, [currentQuestion]: optionIndex });
@@ -76,156 +73,130 @@ export function RiskProfile() {
     }
   };
 
-  const isLastQuestion = currentQuestion === questions.length - 1;
-  const isAnswered = answers[currentQuestion] !== undefined;
-
   return (
-    <div className="flex-1 bg-gradient-to-br from-slate-50 to-blue-50 overflow-auto">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-center justify-between">
+    <div className="flex-1 overflow-auto bg-[radial-gradient(circle_at_top,_#fff6dc_0%,_#fffef8_45%,_#eff6ff_100%)] text-slate-900">
+      <div className="border-b border-amber-200/60 bg-white/85 px-5 py-6 backdrop-blur md:px-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Risk Profile Assessment</h2>
-            <p className="text-gray-500 mt-1">Help us understand your investment preferences</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
-              <Brain className="text-white" size={24} />
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-700">
+              <Sparkles size={14} />
+              Learning your comfort zone
             </div>
+            <h2 className="text-3xl font-black tracking-tight md:text-4xl">Find your investing style</h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600 md:text-base">
+              Answer a few quick questions so the app can suggest starter investments that feel realistic, not scary.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Progress</p>
+            <p className="mt-1 text-lg font-black text-slate-900">{Math.round(progress)}%</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-8 max-w-4xl mx-auto">
-        {/* Info Banner */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <Brain className="text-white" size={20} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-800 mb-2">AI-Powered Analysis</h3>
-              <p className="text-sm text-gray-600">
-                Our advanced AI will analyze your responses to create a personalized investment strategy. 
-                This assessment takes about 3 minutes and helps us recommend the best opportunities for you.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-gray-700">
-              Question {currentQuestion + 1} of {questions.length}
-            </span>
-            <span className="text-sm font-medium text-blue-600">{Math.round(progress)}% Complete</span>
-          </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-blue-600 to-blue-500 transition-all duration-500 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Question Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">
-            {questions[currentQuestion].question}
-          </h3>
-          
-          <div className="space-y-3">
-            {questions[currentQuestion].options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswer(String(index))}
-                className={`w-full text-left p-5 rounded-lg border-2 transition-all ${
-                  answers[currentQuestion] === String(index)
-                    ? 'border-blue-600 bg-blue-50 shadow-md'
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    answers[currentQuestion] === String(index)
-                      ? 'border-blue-600 bg-blue-600'
-                      : 'border-gray-300'
-                  }`}>
-                    {answers[currentQuestion] === String(index) && (
-                      <CheckCircle className="text-white" size={16} />
-                    )}
-                  </div>
-                  <span className={`font-medium ${
-                    answers[currentQuestion] === String(index)
-                      ? 'text-blue-700'
-                      : 'text-gray-700'
-                  }`}>
-                    {option}
-                  </span>
+      <div className="mx-auto max-w-5xl space-y-8 p-5 md:p-8">
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div className="rounded-3xl bg-slate-900 p-6 text-white">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                  <Brain size={24} />
                 </div>
-              </button>
-            ))}
-          </div>
-        </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">AI guided</p>
+                  <p className="text-lg font-black">3 minute assessment</p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-slate-300">
+                We use your answers to tune your starter plan. The goal is not perfection. The goal is to help you begin safely.
+              </p>
+              <div className="mt-6 space-y-3 text-sm text-slate-200">
+                {['Simple language', 'No finance jargon', 'Built for first-time investors'].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                    <CheckCircle2 className="text-emerald-300" size={18} />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between">
+            <div>
+              <div className="mb-4 flex items-center justify-between text-sm font-semibold text-slate-600">
+                <span>Question {currentQuestion + 1} of {questions.length}</span>
+                <span>{Math.round(progress)}% complete</span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-full rounded-full bg-gradient-to-r from-orange-500 to-cyan-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 md:p-8">
+          <h3 className="text-2xl font-black tracking-tight text-slate-900">{questions[currentQuestion].question}</h3>
+          <div className="mt-6 space-y-3">
+            {questions[currentQuestion].options.map((option, index) => {
+              const selected = answers[currentQuestion] === String(index);
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswer(String(index))}
+                  className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+                    selected
+                      ? 'border-orange-400 bg-orange-50 shadow-md'
+                      : 'border-slate-200 hover:border-orange-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`flex h-7 w-7 items-center justify-center rounded-full border-2 ${selected ? 'border-orange-500 bg-orange-500' : 'border-slate-300'}`}>
+                      {selected && <CheckCircle2 className="text-white" size={16} />}
+                    </div>
+                    <span className={`font-medium ${selected ? 'text-orange-700' : 'text-slate-700'}`}>{option}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="flex items-center justify-between gap-4">
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+            className={`rounded-2xl px-6 py-3 font-bold transition-all ${
               currentQuestion === 0
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:shadow-md'
+                ? 'cursor-not-allowed bg-slate-100 text-slate-400'
+                : 'bg-white text-slate-700 shadow-md hover:-translate-y-0.5 hover:text-orange-700'
             }`}
           >
             Previous
           </button>
-          
+
           {!isLastQuestion ? (
             <button
               onClick={handleNext}
               disabled={!isAnswered}
-              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+              className={`inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-extrabold transition-all ${
                 isAnswered
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg hover:-translate-y-0.5'
+                  : 'cursor-not-allowed bg-slate-100 text-slate-400'
               }`}
             >
-              Next Question
-              <ArrowRight size={20} />
+              Next question <ArrowRight size={18} />
             </button>
           ) : (
             <button
               disabled={!isAnswered}
-              className={`px-8 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+              className={`inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-extrabold transition-all ${
                 isAnswered
-                  ? 'bg-gradient-to-r from-green-600 to-green-700 text-white hover:shadow-lg'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:-translate-y-0.5'
+                  : 'cursor-not-allowed bg-slate-100 text-slate-400'
               }`}
             >
-              <Brain size={20} />
-              Submit for AI Analysis
+              <Brain size={18} />
+              Submit for AI analysis
             </button>
           )}
-        </div>
-
-        {/* Progress Indicator Dots */}
-        <div className="flex items-center justify-center gap-2 mt-8">
-          {questions.map((_, index) => (
-            <div
-              key={index}
-              className={`h-2 rounded-full transition-all ${
-                index === currentQuestion
-                  ? 'w-8 bg-blue-600'
-                  : index < currentQuestion
-                  ? 'w-2 bg-blue-400'
-                  : 'w-2 bg-gray-300'
-              }`}
-            ></div>
-          ))}
         </div>
       </div>
     </div>

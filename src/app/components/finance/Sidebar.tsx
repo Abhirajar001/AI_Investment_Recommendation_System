@@ -1,4 +1,6 @@
-import { LayoutDashboard, TrendingUp, ClipboardList, PieChart, Settings, LogOut, BarChart3, MessageCircle } from 'lucide-react';
+import { useEffect } from 'react';
+import { LayoutDashboard, TrendingUp, ClipboardList, PieChart, Settings, LogOut, BarChart3, MessageCircle, BookOpen, Sparkles } from 'lucide-react';
+import { prefetchAuthenticatedRoutes, prefetchSidebarRoute } from '../../routePrefetch';
 
 interface SidebarProps {
   currentPage: string;
@@ -6,6 +8,10 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
+  useEffect(() => {
+    prefetchAuthenticatedRoutes();
+  }, []);
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'recommendations', label: 'AI Recommendations', icon: TrendingUp },
@@ -17,22 +23,28 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   ];
 
   return (
-    <div className="w-64 bg-gradient-to-b from-[#0f1c3f] to-[#1a2744] h-screen flex flex-col border-r border-[#2a3f5f]">
-      {/* Logo */}
-      <div className="p-6 border-b border-[#2a3f5f]">
+    <aside className="hidden h-screen w-72 flex-col border-r border-amber-200/80 bg-[#fffdf8]/95 text-slate-900 shadow-[10px_0_40px_rgba(15,23,42,0.08)] backdrop-blur lg:flex lg:sticky lg:top-0">
+      <div className="border-b border-amber-200 px-6 py-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-md">
             <TrendingUp className="text-white" size={24} />
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg">AI Invest</h1>
-            <p className="text-blue-300 text-xs">Smart Finance</p>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-orange-600">AI Invest</p>
+            <h1 className="text-lg font-black tracking-tight">Build your first portfolio</h1>
           </div>
+        </div>
+
+        <div className="mt-4 rounded-2xl bg-slate-900 px-4 py-3 text-white">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-200">
+            <Sparkles size={14} />
+            Starter plan
+          </div>
+          <p className="mt-2 text-sm text-slate-300">Low stress, high clarity, and lessons built into the flow.</p>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 overflow-auto px-4 py-4">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -41,10 +53,12 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
               <li key={item.id}>
                 <button
                   onClick={() => onNavigate(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  onMouseEnter={() => prefetchSidebarRoute(item.id)}
+                  onFocus={() => prefetchSidebarRoute(item.id)}
+                  className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
-                      : 'text-blue-200 hover:bg-[#2a3f5f] hover:text-white'
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200'
+                      : 'text-slate-600 hover:bg-amber-50 hover:text-slate-900'
                   }`}
                 >
                   <Icon size={20} />
@@ -56,13 +70,12 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
         </ul>
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-[#2a3f5f]">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-red-900/20 transition-all">
+      <div className="border-t border-amber-200 p-4">
+        <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left font-semibold text-rose-600 transition-colors hover:bg-rose-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2">
           <LogOut size={20} />
-          <span className="font-medium">Logout</span>
+          <span>Logout</span>
         </button>
       </div>
-    </div>
+    </aside>
   );
 }

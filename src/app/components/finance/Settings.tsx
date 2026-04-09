@@ -1,5 +1,5 @@
-import { User, Lock, Bell, Moon, Sun, Monitor, Shield } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Bell, CheckCircle2, KeyRound, Monitor, Moon, Sparkles, Sun, User, Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -17,12 +17,6 @@ export function Settings() {
     portfolioUpdates: true,
   });
 
-  // Apply theme changes
-  useEffect(() => {
-    applyTheme(theme);
-    localStorage.setItem('theme-mode', theme);
-  }, [theme]);
-
   const applyTheme = (selectedTheme: Theme) => {
     const html = document.documentElement;
     let isDark = selectedTheme === 'dark';
@@ -31,333 +25,180 @@ export function Settings() {
       isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 
-    if (isDark) {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
+    html.classList.toggle('dark', isDark);
   };
 
+  useEffect(() => {
+    applyTheme(theme);
+    localStorage.setItem('theme-mode', theme);
+  }, [theme]);
+
   const themeOptions: { value: Theme; label: string; icon: any; description: string }[] = [
-    {
-      value: 'light',
-      label: 'Light',
-      icon: Sun,
-      description: 'Always use light theme'
-    },
-    {
-      value: 'dark',
-      label: 'Dark',
-      icon: Moon,
-      description: 'Always use dark theme'
-    },
-    {
-      value: 'system',
-      label: 'System',
-      icon: Monitor,
-      description: 'Use device preference'
-    }
+    { value: 'light', label: 'Light', icon: Sun, description: 'Always use light theme' },
+    { value: 'dark', label: 'Dark', icon: Moon, description: 'Always use dark theme' },
+    { value: 'system', label: 'System', icon: Monitor, description: 'Use device preference' },
   ];
 
   return (
-    <div className="flex-1 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-auto">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Settings</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your account preferences</p>
+    <div className="flex-1 overflow-auto bg-[radial-gradient(circle_at_top,_#fff6dc_0%,_#fffef8_45%,_#eff6ff_100%)] text-slate-900 dark:bg-gray-900 dark:text-white">
+      <div className="border-b border-amber-200/60 bg-white/85 px-5 py-6 backdrop-blur dark:border-gray-700 dark:bg-gray-900/80 md:px-8">
+        <div>
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+            <Sparkles size={14} />
+            Personalize your journey
           </div>
+          <h2 className="text-3xl font-black tracking-tight md:text-4xl">Settings</h2>
+          <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-300 md:text-base">
+            Keep your profile, security, notifications, and appearance tuned for how you want to learn and invest.
+          </p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-8 max-w-5xl mx-auto">
-        <div className="space-y-6">
-          {/* Profile Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <User className="text-white" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Profile Information</h3>
+      <div className="mx-auto max-w-5xl space-y-6 p-5 md:p-8">
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-md">
+              <User size={20} />
             </div>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
-                <input
-                  type="text"
-                  defaultValue="Alex Johnson"
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                <input
-                  type="email"
-                  defaultValue="alex.johnson@email.com"
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  defaultValue="+1 (555) 123-4567"
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Country</label>
-                <select className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">United States</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Canada</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">United Kingdom</option>
-                </select>
-              </div>
+            <div>
+              <h3 className="text-xl font-black">Profile</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-300">Basic account information</p>
             </div>
-            
-            <button className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:shadow-lg transition-all">
-              Update Profile
-            </button>
           </div>
 
-          {/* Security Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Lock className="text-white" size={20} />
+          <div className="grid gap-4 md:grid-cols-2">
+            {[
+              ['Full Name', 'Alex Johnson'],
+              ['Email Address', 'alex.johnson@email.com'],
+              ['Phone Number', '+1 (555) 123-4567'],
+              ['Country', 'United States'],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</label>
+                <input
+                  type="text"
+                  defaultValue={value}
+                  className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 outline-none transition-colors focus:border-orange-400 dark:border-gray-700 dark:bg-gray-900"
+                />
               </div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Security</h3>
+            ))}
+          </div>
+
+          <button className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-3 text-sm font-extrabold text-white shadow-lg transition-transform hover:-translate-y-0.5">
+            <CheckCircle2 size={16} /> Save profile
+          </button>
+        </section>
+
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-500 text-white shadow-md">
+              <KeyRound size={20} />
             </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Current Password</label>
+            <div>
+              <h3 className="text-xl font-black">Security</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-300">Keep your account protected</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {[
+              ['Current Password', 'Enter current password', 'md:col-span-2'],
+              ['New Password', 'Enter new password', ''],
+              ['Confirm New Password', 'Confirm new password', ''],
+            ].map(([label, placeholder, span]) => (
+              <div key={label} className={span}>
+                <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">{label}</label>
                 <input
                   type="password"
-                  placeholder="Enter current password"
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                  placeholder={placeholder}
+                  className="w-full rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 outline-none transition-colors focus:border-orange-400 dark:border-gray-700 dark:bg-gray-900"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Password</label>
-                  <input
-                    type="password"
-                    placeholder="Enter new password"
-                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm New Password</label>
-                  <input
-                    type="password"
-                    placeholder="Confirm new password"
-                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <button className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-medium hover:shadow-lg transition-all">
-              Change Password
-            </button>
+            ))}
           </div>
 
-          {/* Financial Goals */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <Shield className="text-white" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Financial Goals</h3>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Investment Goal</label>
-                <select className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Wealth Growth</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Income Generation</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Capital Preservation</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Retirement Planning</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time Horizon</label>
-                <select className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Less than 3 years</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">3-7 years</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">7-15 years</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">15+ years</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Risk Tolerance</label>
-                <select className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Low Risk</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">Moderate Risk</option>
-                  <option className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">High Risk</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Monthly Investment Budget</label>
-                <input
-                  type="text"
-                  placeholder="$5,000"
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-600 focus:outline-none transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                />
-              </div>
-            </div>
-            
-            <button className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:shadow-lg transition-all">
-              Update Goals
-            </button>
-          </div>
+          <button className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-red-500 px-5 py-3 text-sm font-extrabold text-white shadow-lg transition-transform hover:-translate-y-0.5">
+            <Shield size={16} /> Change password
+          </button>
+        </section>
 
-          {/* Notification Settings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
-                <Bell className="text-white" size={20} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Notifications</h3>
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md">
+              <Bell size={20} />
             </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">Email Notifications</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Receive updates via email</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications.email}
-                    onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">Push Notifications</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Get instant browser notifications</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications.push}
-                    onChange={(e) => setNotifications({...notifications, push: e.target.checked})}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">SMS Alerts</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Text messages for important updates</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications.sms}
-                    onChange={(e) => setNotifications({...notifications, sms: e.target.checked})}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">Market Alerts</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Notifications for market changes</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications.marketAlerts}
-                    onChange={(e) => setNotifications({...notifications, marketAlerts: e.target.checked})}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between py-3">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-white">Portfolio Updates</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Daily portfolio performance summary</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={notifications.portfolioUpdates}
-                    onChange={(e) => setNotifications({...notifications, portfolioUpdates: e.target.checked})}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
+            <div>
+              <h3 className="text-xl font-black">Notifications</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-300">Choose what you want to hear about</p>
             </div>
           </div>
 
-          {/* Appearance */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-gray-900 dark:border-gray-700">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                <Moon className="text-white" size={20} />
+          <div className="space-y-4">
+            {[
+              ['Email Notifications', 'Receive updates via email', 'email'],
+              ['Push Notifications', 'Get instant browser notifications', 'push'],
+              ['SMS Alerts', 'Text messages for important updates', 'sms'],
+              ['Market Alerts', 'Notifications for market changes', 'marketAlerts'],
+              ['Portfolio Updates', 'Daily portfolio performance summary', 'portfolioUpdates'],
+            ].map(([title, description, key]) => (
+              <div key={title} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 dark:border-gray-700 dark:bg-gray-900/40">
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white">{title}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-300">{description}</p>
+                </div>
+                <label className="relative inline-flex cursor-pointer items-center">
+                  <input
+                    type="checkbox"
+                    checked={notifications[key as keyof typeof notifications]}
+                    onChange={(e) => setNotifications({ ...notifications, [key]: e.target.checked })}
+                    className="peer sr-only"
+                  />
+                  <div className="peer h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-orange-500 peer-checked:after:translate-x-full dark:bg-slate-600" />
+                </label>
               </div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Appearance</h3>
-            </div>
-            
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600 dark:text-gray-300">Choose your preferred theme</p>
-              
-              <div className="grid grid-cols-3 gap-4">
-                {themeOptions.map(option => {
-                  const Icon = option.icon;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => setTheme(option.value)}
-                      className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-all ${
-                        theme === option.value
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-500'
-                          : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-blue-400'
-                      }`}
-                    >
-                      <Icon className={`mb-2 size-6 ${
-                        theme === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
-                      }`} />
-                      <p className={`font-medium text-sm ${
-                        theme === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
-                      }`}>
-                        {option.label}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-                        {option.description}
-                      </p>
-                    </button>
-                  );
-                })}
-              </div>
+            ))}
+          </div>
+        </section>
 
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                  <span className="font-semibold">Current theme:</span> {theme === 'system' ? 'System (automatic)' : theme}
-                </p>
-              </div>
+        <section className="rounded-3xl border border-white/70 bg-white p-6 shadow-xl shadow-slate-200/70 dark:border-gray-700 dark:bg-gray-800 md:p-8">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow-md">
+              <Moon size={20} />
+            </div>
+            <div>
+              <h3 className="text-xl font-black">Appearance</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-300">Pick the look that feels best</p>
             </div>
           </div>
-        </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {themeOptions.map((option) => {
+              const Icon = option.icon;
+              const selected = theme === option.value;
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => setTheme(option.value)}
+                  className={`rounded-2xl border-2 p-4 text-left transition-all ${
+                    selected
+                      ? 'border-orange-400 bg-orange-50 shadow-md dark:border-orange-400 dark:bg-orange-950/40'
+                      : 'border-slate-200 bg-white hover:border-orange-200 dark:border-gray-700 dark:bg-gray-900'
+                  }`}
+                >
+                  <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${selected ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-600 dark:bg-gray-700 dark:text-slate-300'}`}>
+                    <Icon size={18} />
+                  </div>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">{option.label}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">{option.description}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 dark:border-gray-700 dark:bg-gray-900/50 dark:text-slate-300">
+            Current theme: <span className="font-bold text-slate-900 dark:text-white">{theme === 'system' ? 'System (automatic)' : theme}</span>
+          </div>
+        </section>
       </div>
     </div>
   );

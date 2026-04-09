@@ -1,7 +1,12 @@
 import '@testing-library/jest-dom/vitest';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  renderLoginPage,
+  fillLoginForm,
+  submitLoginForm,
+} from '../../../test/utils/loginPageTestUtils';
 
 const { loginMock, setTokenMock, isAxiosErrorMock } = vi.hoisted(() => ({
   loginMock: vi.fn(),
@@ -22,38 +27,8 @@ vi.mock('../../../../services', () => ({
   login: loginMock,
 }));
 
-import { LoginPage } from './LoginPage';
-
 describe('LoginPage', () => {
   const onNavigate = vi.fn();
-
-  const renderLoginPage = () => {
-    render(<LoginPage onNavigate={onNavigate} />);
-  };
-
-  const fillLoginForm = ({
-    email = 'user@example.com',
-    password = 'secret123',
-    mfa = '123456',
-  }: {
-    email?: string;
-    password?: string;
-    mfa?: string;
-  }) => {
-    fireEvent.change(screen.getByLabelText(/email address/i), {
-      target: { value: email },
-    });
-    fireEvent.change(screen.getByLabelText(/password/i), {
-      target: { value: password },
-    });
-    fireEvent.change(screen.getByLabelText(/mfa code/i), {
-      target: { value: mfa },
-    });
-  };
-
-  const submitLoginForm = () => {
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-  };
 
   beforeEach(() => {
     onNavigate.mockClear();
@@ -64,7 +39,7 @@ describe('LoginPage', () => {
   });
 
   it('renders the login page', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     expect(screen.getByText(/welcome back/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
@@ -72,7 +47,7 @@ describe('LoginPage', () => {
   });
 
   it('shows validation errors on empty submit', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     submitLoginForm();
 
     expect(screen.getByText(/email is required/i)).toBeInTheDocument();
@@ -80,7 +55,7 @@ describe('LoginPage', () => {
   });
 
   it('validates MFA code format', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({ mfa: '12' });
     submitLoginForm();
 
@@ -93,7 +68,7 @@ describe('LoginPage', () => {
       data: { access_token: 'token-123' },
     });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
 
     fireEvent.change(screen.getByLabelText(/email address/i), {
       target: { value: 'User@Example.com' },
@@ -118,7 +93,7 @@ describe('LoginPage', () => {
       data: { access_token: 'token-456' },
     });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({ mfa: '654321' });
     submitLoginForm();
 
@@ -136,7 +111,7 @@ describe('LoginPage', () => {
       response: { data: { detail: 'Bad credentials' } },
     });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({ mfa: '' });
     submitLoginForm();
 
@@ -149,7 +124,7 @@ describe('LoginPage', () => {
       response: { data: {} },
     });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({ mfa: '' });
     submitLoginForm();
 
@@ -162,7 +137,7 @@ describe('LoginPage', () => {
     isAxiosErrorMock.mockReturnValue(true);
     loginMock.mockRejectedValueOnce({ code: 'ECONNABORTED', message: 'timeout' });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({});
     submitLoginForm();
 
@@ -176,7 +151,7 @@ describe('LoginPage', () => {
       data: {},
     });
 
-    renderLoginPage();
+    renderLoginPage(onNavigate);
     fillLoginForm({ mfa: '' });
     submitLoginForm();
 
@@ -227,7 +202,7 @@ describe('LoginPage', () => {
   });
 
   it('navigates to reset-password and stores pending email', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
 
     fireEvent.change(screen.getByLabelText(/email address/i), {
       target: { value: 'resetme@example.com' },
@@ -240,7 +215,7 @@ describe('LoginPage', () => {
   });
 
   it('navigates to reset-password without storing email when empty', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
 
     fireEvent.click(screen.getByRole('button', { name: /forgot password\?/i }));
 
@@ -249,7 +224,7 @@ describe('LoginPage', () => {
   });
 
   it('navigates via Sign Up and Back to Home buttons', () => {
-    renderLoginPage();
+    renderLoginPage(onNavigate);
 
     fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
     fireEvent.click(screen.getByRole('button', { name: /back to home/i }));
